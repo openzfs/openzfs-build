@@ -1,0 +1,7 @@
+---
+secret_files:
+  /etc/openzfs.conf:
+    owner: "jenkins"
+    group: "jenkins"
+    mode: "0400"
+    content: "<ansible vault password>"

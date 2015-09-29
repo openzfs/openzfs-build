@@ -1,0 +1,4 @@
+---
+- hosts: openzfs-jenkins-master
+  roles:
+    - openzfs-jenkins-master

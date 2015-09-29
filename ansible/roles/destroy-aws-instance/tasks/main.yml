@@ -1,0 +1,16 @@
+---
+#
+# We need to be careful to use "no_log" here, or else we could leak the
+# AWS credentials in the Ansible log when it's run in verbose mode (the
+# contents of variables are output when full logging is enabled).
+#
+- name: Destroy AWS instances
+  ec2:
+    state: absent
+    aws_access_key: "{{ aws_access_key }}"
+    aws_secret_key: "{{ aws_secret_key }}"
+    instance_ids:
+      - "{{ aws_instance_id }}"
+    region: "{{ aws_region }}"
+    wait: true
+  no_log: true

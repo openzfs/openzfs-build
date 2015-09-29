@@ -1,0 +1,34 @@
+---
+#
+# We need to be careful to use "no_log" here, or else we could leak the
+# AWS credentials in the Ansible log when it's run in verbose mode (the
+# contents of variables are output when full logging is enabled).
+#
+- name: Create AWS instances
+  ec2:
+    instance_type: "{{ aws_instance_type }}"
+    aws_access_key: "{{ aws_access_key }}"
+    aws_secret_key: "{{ aws_secret_key }}"
+    region: "{{ aws_region }}"
+    image: "{{ aws_image }}"
+    group: "{{ aws_group }}"
+    wait: true
+    instance_tags:
+      Name: "{{ aws_instance_name }}"
+  no_log: true
+  register: aws
+
+- name: Add new AWS instances
+  add_host:
+    hostname: "{{ item.public_dns_name }}"
+    groupname: "{{ aws_instance_group }}"
+    ansible_ssh_user: "{{ aws_instance_user }}"
+    ansible_ssh_pass: "{{ aws_instance_pass }}"
+  with_items: aws.instances
+
+- name: Wait for SSH to come up on AWS instances.
+  wait_for:
+    host: "{{ item.public_dns_name }}"
+    port: 22
+    state: started
+  with_items: aws.instances

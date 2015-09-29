@@ -1,0 +1,8 @@
+---
+#
+# We need to be careful to use "no_log" here, or else we could leak the
+# credentials in the Ansible log when it's run in verbose mode.
+#
+- name: Load DxOS Credentials
+  include_vars: "dxos-credentials.yml"
+  no_log: true

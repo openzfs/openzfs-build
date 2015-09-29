@@ -1,0 +1,103 @@
+---
+#
+# We need this to determine this system's AWS instance id. This value is
+# then used below to set the slave's name.
+#
+- name: Gather AWS instance information
+  action: ec2_facts
+
+#
+# Before we can copy the scripts into place below, we need to ensure the
+# directory exists to hold the scripts.
+#
+- name: Create OpenZFS build script directory
+  sudo: true
+  file:
+    path: "/usr/local/build-os"
+    state: "directory"
+    owner: "root"
+    group: "root"
+    mode: "0755"
+
+#
+# This feels like a hack, but the Jenkins job that performs a full
+# nightly build uses these script to execute the build. There's probably
+# a better way to execute the build such that it doesn't depend on this
+# build script, but for this will suffice.
+#
+- name: Copy OpenZFS build script files
+  sudo: true
+  copy:
+    src: "usr/local/build-os/{{ item.file }}"
+    dest: "/usr/local/build-os/{{ item.file }}"
+    owner: "root"
+    group: "root"
+    mode: "{{ item.mode }}"
+  with_items:
+    - { file: "common.sh", mode: "0644" }
+    - { file: "os-nightly-lib.sh", mode: "0644" }
+    - { file: "build-os.sh", mode: "0755" }
+
+#
+# We need to create a directory that Jenkins can use for a workspace
+# which it uses to store all of it's files that it needs to execute a
+# job. Otherwise, the Jenkins swarm plugin will use the root directory
+# by default, which will fail due to insufficient permissions.
+#
+- name: Create Jenkins workspace directory
+  file:
+    path: "{{ jenkins_fsroot }}"
+    owner: "{{ dxos_ssh_user }}"
+    state: "directory"
+    mode: "0755"
+
+#
+# We store a local copy of the swarm client to eliminate our dependency
+# on downloading from the upstream source. The file was downloaded from:
+#
+#     http://maven.jenkins-ci.org/content/repositories/releases/org/jenkins-ci/plugins/swarm-client/
+#
+- name: Copy swarm client
+  copy:
+    src: "var/tmp/swarm-client-2.0-jar-with-dependencies.jar"
+    dest: "/var/tmp/swarm-client-2.0-jar-with-dependencies.jar"
+    owner: "{{ dxos_ssh_user }}"
+    mode: "0644"
+  register: swarm
+
+#
+# This will execute the client portion of the Jenkins swarm plugin,
+# causing this AWS instance to connect back to the Jenkins master node.
+# We want this command to continue running "forever", but we don't want
+# to block any Ansible playbooks from continuing after executing this
+# command.
+#
+# The "poll" value used allows us to "fire and forget", and keeps us
+# from waiting for the command to exit. Unfortunately, there isn't a
+# good way to execute the command such that it'll run "forever"; Ansible
+# requires a duration for the command to run in the form of the "async"
+# parameter. To workaround this, we just specify an arbitrary maximum
+# time for the command to run of 7 weeks (these slaves are used on a
+# per-job basis, so I don't expect any single build to take more than 7
+# weeks to complete).
+#
+# Note, we need to ensure the slave's name is identical to it's AWS
+# instance id since this assumption is used by the Jenkins jobs to pin
+# specific jobs to this slave. We use the Ansible "ec2_facts" action to
+# gather the AWS instance id of this system, and then pass this into
+# the swarm client; also, we need to use the "-disableClientsUniqueId"
+# or else a randomly generated string will be appended to the value we
+# pass via the "-name" option.
+#
+- name: Connect to Jenkins master using swarm client
+  command: >
+    /usr/bin/java
+      -jar "/var/tmp/swarm-client-2.0-jar-with-dependencies.jar"
+      -name "{{ ansible_ec2_instance_id }}"
+      -fsroot "{{ jenkins_fsroot }}"
+      -master "{{ jenkins_master }}"
+      -labels "{{ jenkins_label }}"
+      -executors "{{ jenkins_executors }}"
+      -disableClientsUniqueId
+  async: 604800
+  poll: 0

@@ -1,0 +1,61 @@
+---
+- name: Add the ansible PPA.
+  apt_repository:
+    repo: "ppa:ansible/ansible"
+    state: present
+
+- name: Update the apt cache.
+  apt:
+    update_cache: yes
+    cache_valid_time: 3600
+
+- name: Install software-properties-common.
+  apt:
+    name: software-properties-common
+    state: present
+
+- name: Install the git package.
+  apt:
+    name: git
+    state: present
+
+- name: Install the ansible package.
+  apt:
+    name: ansible
+    state: present
+
+- name: Update ansible configuration file.
+  lineinfile:
+    dest: /etc/ansible/ansible.cfg
+    regexp: "^{{ item.key }} "
+    insertafter: "#{{ item.key }} "
+    line: "{{ item.key }} = {{ item.value }}"
+  with_items:
+    - { key: "force_color", value: "True" }
+    - { key: "host_key_checking", value: "False" }
+    - { key: "scp_if_ssh", value: "True" }
+    - { key: "remote_tmp", value: "/tmp" }
+
+- name: Install the python-boto package.
+  apt:
+    name: python-boto
+    state: present
+
+#
+# We need to be careful to use "no_log" here and beloww, or else we
+# could leak the credentials in the Ansible log when it's run in
+# verbose mode.
+#
+- name: Load secret files.
+  include_vars: "secret_files.yml"
+  no_log: true
+
+- name: Copy secret files.
+  copy:
+    dest: "{{ item.key }}"
+    content: "{{ item.value.content }}"
+    owner: "{{ item.value.owner }}"
+    group: "{{ item.value.group }}"
+    mode: "{{ item.value.mode }}"
+  with_dict: secret_files
+  no_log: true

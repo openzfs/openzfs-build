@@ -1,0 +1,8 @@
+---
+aws_instance_name: "openzfs-aws-instance"
+aws_instance_type: "t2.micro"
+aws_instance_user: "ec2-user"
+aws_instance_pass: "password"
+aws_image: "ami-cd3aff89"
+aws_region: "us-west-1"
+aws_group: "default"

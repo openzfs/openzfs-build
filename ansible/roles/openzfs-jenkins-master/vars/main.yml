@@ -1,0 +1,12 @@
+---
+jenkins_plugins:
+  - ansicolor
+  - any-buildstep
+  - envinject
+  - flexible-publish
+  - git
+  - job-dsl
+  - jenkins-multijob-plugin
+  - nodelabelparameter
+  - parameterized-trigger
+  - swarm

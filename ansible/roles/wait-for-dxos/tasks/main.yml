@@ -1,0 +1,13 @@
+---
+#
+# Often times, the delphix user's home directory is not fully
+# initialized even though the ssh service is ready. This can cause
+# spurious failures, since Ansible will attempt to run on the DxOS
+# system as soon as ssh is functional. Thus, we need to properly wait
+# for this directory to finish initializing before proceeding with any
+# additional configuration.
+#
+- name: Wait for the DxOS system to initialize
+  wait_for:
+    path: "/export/home/delphix"
+    state: "present"
