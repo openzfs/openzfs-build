@@ -1,0 +1,25 @@
+---
+- hosts: dcenter
+  vars:
+    add_to_ansible_group: "openzfs-jenkins-slave"
+    instance_user: "{{ omnios_ssh_user }}"
+    instance_pass: "{{ omnios_ssh_pass }}"
+    instance_sudo: "{{ omnios_ssh_sudo }}"
+    instance_name: "{{ jenkins_name }}"
+    image: "omnios-r151014"
+  roles:
+    - omnios-credentials
+    - create-dc-instance
+
+#
+# We can't pull these roles into the block above because these need to
+# run on the Jenkins slave that was just created; while the above role
+# needs to run on the Jenkins master.
+#
+- hosts: openzfs-jenkins-slave
+  vars:
+    jenkins_master: "http://psurya-jenkins.dcenter.delphix.com:8080"
+    jenkins_label: "openzfs-build-slave"
+  roles:
+    - initialize-omnios
+    - openzfs-jenkins-slave

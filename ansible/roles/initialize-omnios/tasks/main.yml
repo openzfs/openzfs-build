@@ -1,0 +1,43 @@
+---
+- name: Ensure all packages needed are installed
+  pkg5:
+    name:
+      - pkg:/developer/astdev
+      - pkg:/developer/build/make
+      - pkg:/developer/build/onbld
+      - pkg:/developer/gcc44
+      - pkg:/developer/sunstudio12.1
+      - pkg:/developer/gnu-binutils
+      - pkg:/developer/java/jdk
+      - pkg:/developer/lexer/flex
+      - pkg:/developer/object-file
+      - pkg:/developer/parser/bison
+      - pkg:/developer/versioning/mercurial
+      - pkg:/developer/versioning/git
+      - pkg:/developer/library/lint
+      - pkg:/library/glib2
+      - pkg:/library/libxml2
+      - pkg:/library/libxslt
+      - pkg:/library/nspr/header-nspr
+      - pkg:/library/perl-5/xml-parser
+      - pkg:/library/security/trousers
+      - pkg:/runtime/perl
+      - pkg:/runtime/perl-64
+      - pkg:/runtime/perl/module/sun-solaris
+      - pkg:/system/library/math
+      - pkg:/system/library/install
+      - pkg:/system/library/dbus
+      - pkg:/system/library/libdbus
+      - pkg:/system/library/libdbus-glib
+      - pkg:/system/library/mozilla-nss/header-nss
+      - pkg:/system/header
+      - pkg:/system/management/snmp/net-snmp
+      - pkg:/text/gnu-gettext
+      - pkg:/library/python-2/python-extra-26
+      - pkg:/developer/versioning/git
+
+- name: Ensure dmake symbolic link is present
+  file:
+    path: "/usr/bin/dmake"
+    src: "/opt/sunstudio12.1/bin/dmake"
+    state: "link"

@@ -32,15 +32,36 @@
     - { file: "build-os.sh", mode: "0755" }
 
 #
+# This group is used for the delphix user created below.
+#
+- name: Ensure the staff group is present
+  group:
+    name: "staff"
+    state: present
+
+#
+# The illumos build will fail if it is run as root. Thus we specifically
+# run the Jenkins slave using a non-root user, the delphix user. This
+# user might not be already present on the system, so we need to check.
+#
+- name: Ensure the delphix user is present
+  user:
+    name: "delphix"
+    shell: "/bin/bash"
+    home: "/export/home/delphix"
+    group: "staff"
+
+#
 # We need to create a directory that Jenkins can use for a workspace
 # which it uses to store all of it's files that it needs to execute a
 # job. Otherwise, the Jenkins swarm plugin will use the root directory
-# by default, which will fail due to insufficient permissions.
+# by default, which may fail due to insufficient permissions.
 #
 - name: Create Jenkins workspace directory
   file:
     path: "{{ jenkins_fsroot }}"
-    owner: "{{ dxos_ssh_user }}"
+    owner: "delphix"
+    group: "staff"
     state: "directory"
     mode: "0755"
 
@@ -54,9 +75,9 @@
   copy:
     src: "var/tmp/swarm-client-2.0-jar-with-dependencies.jar"
     dest: "/var/tmp/swarm-client-2.0-jar-with-dependencies.jar"
-    owner: "{{ dxos_ssh_user }}"
+    owner: "delphix"
+    group: "staff"
     mode: "0644"
-  register: swarm
 
 #
 # We need the slave's name to be specified as it's needed in the next
@@ -86,6 +107,13 @@
 # per-job basis, so I don't expect any single build to take more than 7
 # weeks to complete).
 #
+# Also note, we specifically run the Jenkins swarm client as a non-root
+# use because the illumos build will fail if the build is run as root.
+# Thus, we drop down to the delphix user when running the swarm client,
+# this will ensure any commands run through Jenkins will be run as the
+# delphix user; otherwise the client would run as the "ansible_ssh_user"
+# which could potentially be root.
+#
 - name: Connect to Jenkins master using swarm client
   command: >
     /usr/bin/java
@@ -95,6 +123,9 @@
       -master "{{ jenkins_master }}"
       -labels "{{ jenkins_label }}"
       -executors "{{ jenkins_executors }}"
+      -mode "exclusive"
       -disableClientsUniqueId
+  become: true
+  become_user: "delphix"
   async: 604800
   poll: 0

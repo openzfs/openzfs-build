@@ -1,3 +1,4 @@
 .vagrant
-.vault-password
+.vault-password1
+.vault-password2
 *.swp

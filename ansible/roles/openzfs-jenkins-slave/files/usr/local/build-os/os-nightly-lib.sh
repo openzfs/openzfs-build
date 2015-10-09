@@ -40,9 +40,9 @@ function nightly_env_set_var
 	varname=$2
 	varval=$3
 
-	if grep "export $varname" "$envfile" >/dev/null; then
+	if grep "^export $varname" "$envfile" >/dev/null; then
 		if $force; then
-			sed -ie "s@#\?export $varname.*@export $varname=\"$varval\"@" "$envfile"
+			sed -ie "s@export $varname.*@export $varname=\"$varval\"@" "$envfile"
 		else
 			echo "NOTE: Not setting $varname, value is already set in $envfile."
 		fi

@@ -3,14 +3,16 @@
   connection: local
   gather_facts: false
   vars:
-    aws_instance_user: "{{ dxos_ssh_user }}"
-    aws_instance_pass: "{{ dxos_ssh_pass }}"
-    aws_instance_type: "c4.2xlarge"
-    aws_instance_group: "openzfs-jenkins-slave"
-    aws_image: "ami-bb996bff"
+    add_to_ansible_group: "openzfs-jenkins-slave"
+    instance_user: "{{ dxos_ssh_user }}"
+    instance_pass: "{{ dxos_ssh_pass }}"
+    instance_sudo: "{{ dxos_ssh_sudo }}"
+    instance_type: "c4.2xlarge"
+    image: "ami-bb996bff"
     aws_region: "us-west-1"
     aws_group: "all-all"
   roles:
+    - dxos-credentials
     - create-aws-instance
 
 #
@@ -23,7 +25,7 @@
     jenkins_master: "http://build.prakashsurya.com:8080"
     jenkins_label: "openzfs-build-slave"
   roles:
-    - wait-for-dxos
+    - initialize-dxos
     - openzfs-jenkins-slave
 
 #
