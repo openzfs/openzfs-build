@@ -29,9 +29,8 @@
 #
 # We need to create a properties file in order to allow the Jenkins jobs
 # that calls this playbook a mechanism to determine the AWS instance id
-# of the slave that was just created. The Jenkins job uses this
-# information to pin downstream jobs to the specific slave that was
-# just created.
+# of the slave that was just created. The Jenkins job needs this
+# information to destroy the instance after it's work is finished.
 #
 - hosts: localhost
   connection: local

@@ -1,12 +1,5 @@
 ---
 #
-# We need this to determine this system's AWS instance id. This value is
-# then used below to set the slave's name.
-#
-- name: Gather AWS instance information
-  action: ec2_facts
-
-#
 # Before we can copy the scripts into place below, we need to ensure the
 # directory exists to hold the scripts.
 #
@@ -66,6 +59,18 @@
   register: swarm
 
 #
+# We need the slave's name to be specified as it's needed in the next
+# task when running the Jenkins swarm client. Also, since we're using
+# the "-disableClientsUniqueId" option, this value needs to be unique
+# which is why we can't provide a default value. Ideally, we'd also have
+# a way to determine if the user provided name is unique.
+#
+- name: Ensure the Jenkins slave name is specified
+  fail:
+    msg: "The Jenkins slave's name was not specified."
+  when: jenkins_name is not defined
+
+#
 # This will execute the client portion of the Jenkins swarm plugin,
 # causing this AWS instance to connect back to the Jenkins master node.
 # We want this command to continue running "forever", but we don't want
@@ -81,19 +86,11 @@
 # per-job basis, so I don't expect any single build to take more than 7
 # weeks to complete).
 #
-# Note, we need to ensure the slave's name is identical to it's AWS
-# instance id since this assumption is used by the Jenkins jobs to pin
-# specific jobs to this slave. We use the Ansible "ec2_facts" action to
-# gather the AWS instance id of this system, and then pass this into
-# the swarm client; also, we need to use the "-disableClientsUniqueId"
-# or else a randomly generated string will be appended to the value we
-# pass via the "-name" option.
-#
 - name: Connect to Jenkins master using swarm client
   command: >
     /usr/bin/java
       -jar "/var/tmp/swarm-client-2.0-jar-with-dependencies.jar"
-      -name "{{ ansible_ec2_instance_id }}"
+      -name "{{ jenkins_name }}"
       -fsroot "{{ jenkins_fsroot }}"
       -master "{{ jenkins_master }}"
       -labels "{{ jenkins_label }}"

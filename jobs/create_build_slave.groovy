@@ -29,14 +29,23 @@ job("create-build-slave") {
 
     parameters {
         /*
+         * This specifies the name that will be assigned to the new
+         * slave that is created. By exposing this as a parameter, a
+         * parent job can specify the new slave's name, and can then
+         * user this name to pin jobs to this specific slave.
+         */
+        stringParam('SLAVE_NAME', null,
+            'The name that will be assigned to the newly created slave.')
+
+        /*
          * This specifies the full path of where the Ansible playbook
          * should write the properties file. By exposing this as a
          * parameter, a parent job can provide a path to a file in its
          * workspace which makes it easy for that parent job to read in
          * the properties file. This properties file is needed to expose
-         * the AWS instance id of the new slave to a given Jenkins job,
-         * which can then be used to pin specific jobs to run on this
-         * new slave (the slave's name is equal to its AWS instance id).
+         * the AWS instance id of the new slave to the parent job, so
+         * the instance id can be to destroy the slave after it's work
+         * is completed.
          */
         stringParam('PROPERTIES_PATH', null,
             'Full path of where to write the properties file')
@@ -56,12 +65,9 @@ job("create-build-slave") {
          * Execute the Ansible playbook which will create a new AWS
          * instance, which will then use the Jenkins swarm plugin to
          * create a new Jenkins slave.
-         *
-         * Also note, we pass in the $PROPERTIES_PATH parameter so the
-         * Ansible playbook will write the properties file to the
-         * correct location.
          */
         shell("ANSIBLE_FORCE_COLOR=true /usr/bin/ansible-playbook -vvvv " +
+            "--extra-vars=\"jenkins_name='\$SLAVE_NAME'\" " +
             "--extra-vars=\"properties_path='\$PROPERTIES_PATH'\" " +
             "ansible/create-build-slave.yml " +
             "--vault-password-file /etc/openzfs.conf")

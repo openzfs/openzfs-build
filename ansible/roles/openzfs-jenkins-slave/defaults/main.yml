@@ -1,5 +1,5 @@
 ---
-jenkins_fsroot: "/var/tmp/jenkins"
 jenkins_master: "http://jenkins.open-zfs.org:8080"
 jenkins_label: "openzfs-jenkins-slave"
+jenkins_fsroot: "/var/tmp/jenkins"
 jenkins_executors: 1

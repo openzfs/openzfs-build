@@ -26,10 +26,6 @@ job("openzfs-build-nightly") {
         colorizeOutput()
     }
 
-    parameters {
-        stringParam('AWS_INSTANCE_ID', null, "AWS instance id")
-    }
-
     scm {
         github('illumos/illumos-gate', 'master')
     }

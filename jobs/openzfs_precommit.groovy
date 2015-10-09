@@ -27,6 +27,7 @@ multiJob("openzfs-precommit") {
                  * makes it simple to read in the file below.
                  */
                 parameters {
+                    predefinedProp("SLAVE_NAME", '${BUILD_TAG}')
                     predefinedProp("PROPERTIES_PATH",
                         '${WORKSPACE}/aws_instance.properties')
                 }
@@ -64,7 +65,7 @@ multiJob("openzfs-precommit") {
                  * available slave.
                  */
                 parameters {
-                    nodeLabel("NODE_NAME", '$AWS_INSTANCE_ID')
+                    nodeLabel("NODE_NAME", '${BUILD_TAG}')
                 }
             }
         }
