@@ -26,8 +26,34 @@ job("openzfs-build-nightly") {
         colorizeOutput()
     }
 
+    parameters {
+        /*
+         * This parameter allows a user of this job to provide a
+         * specific branch or git hash that should be checked out,
+         * built, and tested. This is particularly useful for building
+         * and testing pull GitHub request commits prior to integrating
+         * them on the "master" branch.
+         */
+        stringParam('GIT_BRANCH', 'master',
+            'The name of the git branch or the git hash to checkout')
+    }
+
     scm {
-        github('illumos/illumos-gate', 'master')
+        git {
+            /*
+             * In order to support building pull requests, we need to
+             * tweak the refspec to ensure we fetch pull request commits
+             * as well. By default, none of the pull requests would be
+             * fetched, which would cause failures if a pull request
+             * commit was passed in as the "GIT_BRANCH" parameter of
+             * this job.
+             */
+            remote {
+                github('illumos/illumos-gate')
+                refspec('+refs/pull/*:refs/remotes/origin/pr/*')
+            }
+            branch('${GIT_BRANCH}')
+        }
     }
 
     steps {
