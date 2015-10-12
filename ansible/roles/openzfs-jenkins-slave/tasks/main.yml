@@ -4,7 +4,8 @@
 # directory exists to hold the scripts.
 #
 - name: Create OpenZFS build script directory
-  sudo: true
+  become: true
+  become_user: "root"
   file:
     path: "/usr/local/build-os"
     state: "directory"
@@ -19,7 +20,8 @@
 # build script, but for this will suffice.
 #
 - name: Copy OpenZFS build script files
-  sudo: true
+  become: true
+  become_user: "root"
   copy:
     src: "usr/local/build-os/{{ item.file }}"
     dest: "/usr/local/build-os/{{ item.file }}"
@@ -35,6 +37,8 @@
 # This group is used for the delphix user created below.
 #
 - name: Ensure the staff group is present
+  become: true
+  become_user: "root"
   group:
     name: "staff"
     state: present
@@ -45,6 +49,8 @@
 # user might not be already present on the system, so we need to check.
 #
 - name: Ensure the delphix user is present
+  become: true
+  become_user: "root"
   user:
     name: "delphix"
     shell: "/bin/bash"
@@ -58,6 +64,8 @@
 # by default, which may fail due to insufficient permissions.
 #
 - name: Create Jenkins workspace directory
+  become: true
+  become_user: "root"
   file:
     path: "{{ jenkins_fsroot }}"
     owner: "delphix"
@@ -72,6 +80,8 @@
 #     http://maven.jenkins-ci.org/content/repositories/releases/org/jenkins-ci/plugins/swarm-client/
 #
 - name: Copy swarm client
+  become: true
+  become_user: "root"
   copy:
     src: "var/tmp/swarm-client-2.0-jar-with-dependencies.jar"
     dest: "/var/tmp/swarm-client-2.0-jar-with-dependencies.jar"
@@ -108,13 +118,15 @@
 # weeks to complete).
 #
 # Also note, we specifically run the Jenkins swarm client as a non-root
-# use because the illumos build will fail if the build is run as root.
-# Thus, we drop down to the delphix user when running the swarm client,
+# user because the illumos build will fail if the build is run as root.
+# Thus, we drop down to the delphix user when running the swarm client;
 # this will ensure any commands run through Jenkins will be run as the
-# delphix user; otherwise the client would run as the "ansible_ssh_user"
+# delphix user. Otherwise the client would run as the "ansible_ssh_user"
 # which could potentially be root.
 #
 - name: Connect to Jenkins master using swarm client
+  become: true
+  become_user: "delphix"
   command: >
     /usr/bin/java
       -jar "/var/tmp/swarm-client-2.0-jar-with-dependencies.jar"
@@ -125,7 +137,5 @@
       -executors "{{ jenkins_executors }}"
       -mode "exclusive"
       -disableClientsUniqueId
-  become: true
-  become_user: "delphix"
   async: 604800
   poll: 0

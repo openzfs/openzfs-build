@@ -24,7 +24,6 @@
     groupname: "{{ add_to_ansible_group }}"
     ansible_ssh_user: "{{ instance_user }}"
     ansible_ssh_pass: "{{ instance_pass }}"
-    ansible_sudo: "{{ instance_sudo }}"
   with_items: aws.instances
   when: add_to_ansible_group is defined
 

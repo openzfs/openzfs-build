@@ -4,7 +4,6 @@
     add_to_ansible_group: "openzfs-jenkins-slave"
     instance_user: "{{ omnios_ssh_user }}"
     instance_pass: "{{ omnios_ssh_pass }}"
-    instance_sudo: "{{ omnios_ssh_sudo }}"
     instance_name: "{{ jenkins_name }}"
     image: "omnios-r151014"
   roles:

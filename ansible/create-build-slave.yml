@@ -6,7 +6,6 @@
     add_to_ansible_group: "openzfs-jenkins-slave"
     instance_user: "{{ dxos_ssh_user }}"
     instance_pass: "{{ dxos_ssh_pass }}"
-    instance_sudo: "{{ dxos_ssh_sudo }}"
     instance_type: "c4.2xlarge"
     image: "ami-bb996bff"
     aws_region: "us-west-1"
