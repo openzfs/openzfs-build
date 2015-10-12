@@ -11,48 +11,6 @@
 
 source "$CI_SH_LIB/common.sh"
 
-#
-# Updates a given nightly environment file. If the given variable is already
-# defined in the file it is not set unless the -f option is specified. If
-# an existing variable definition is updated it is updated in-place (so any
-# later variable declarations that reference that variable are still valid),
-# if it is a new definition is appended to the end of the file.
-#
-function nightly_env_set_var
-{
-	local OPTARG OPTIND opt force envfile varname varval
-
-	force=false
-	while getopts "f" opt; do
-		case $opt in
-		    f)
-			force=true
-			;;
-		    *)
-			echo "Invalid option: -$OPTARG" >&2
-			exit 2
-			;;
-		esac
-	done
-	shift $((OPTIND-1))
-
-	envfile=$1
-	varname=$2
-	varval=$3
-
-	if grep "^export $varname" "$envfile" >/dev/null; then
-		if $force; then
-			sed -ie "s@export $varname.*@export $varname=\"$varval\"@" "$envfile"
-		else
-			echo "NOTE: Not setting $varname, value is already set in $envfile."
-		fi
-		return $?
-	else
-		echo "export $varname=\"$varval\"" >>"$envfile"
-		return $?
-	fi
-}
-
 function __echo_jenkins_helper_script
 {
 	local build_mail
@@ -121,8 +79,8 @@ function nightly_run
 	#
 	lockname="jenkins-$build_pid-nightly.lock"
 
-	log_must nightly_env_set_var -f "$envfile" "LOCKNAME" "$lockname"
-	log_must nightly_env_set_var -f "$envfile" "POST_NIGHTLY" "$jenkins_helper"
+	log_must nightly_env_set_var "LOCKNAME" "$lockname"
+	log_must nightly_env_set_var "POST_NIGHTLY" "$jenkins_helper"
 
 	log env -i time "$nightly" "$envfile" &
 	nightly_pid=$!
