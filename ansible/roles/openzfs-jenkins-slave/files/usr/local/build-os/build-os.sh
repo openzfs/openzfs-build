@@ -9,6 +9,15 @@ set -o errexit
 source "${CI_SH_LIB}/common.sh"
 source "${CI_SH_LIB}/os-nightly-lib.sh"
 
+#
+# The illumos build cannot be run as the root user. The Jenkins
+# infrastructure built around running the build should ensure the build
+# is not attempted as root. In case that fails for whatever reason, it's
+# best to fail early and with a good error message, than failing later
+# with an obscure build error.
+#
+[ $EUID -ne 0 ] || die "build attempted as root user; this is not supported."
+
 log_must wget --quiet \
   https://download.joyent.com/pub/build/illumos/on-closed-bins.i386.tar.bz2 \
   https://download.joyent.com/pub/build/illumos/on-closed-bins-nd.i386.tar.bz2
