@@ -33,6 +33,14 @@ job("destroy-dc-build-slave") {
          * be destroyed using the Ansible playbook below.
          */
         stringParam('DC_INSTANCE_NAME', null, "DCenter instance name")
+
+        /*
+         * This parameter is used to determine if the DCenter instance
+         * should be destroyed, or if the instance should only be
+         * unregistered. By default, a full destroy is issued.
+         */
+        stringParam('UNREGISTER_ONLY', 'no',
+            "If 'yes', the instance will be unregistered and not destroyed.")
     }
 
     steps {
@@ -45,14 +53,52 @@ job("destroy-dc-build-slave") {
             github("prakashsurya/openzfs-build", "master")
         }
 
-        /*
-         * Execute the Ansible playbook which will attempt to destroy
-         * the DCenter instance specified by the DC_INSTANCE_NAME
-         * parameter.
-         */
-        shell("ANSIBLE_FORCE_COLOR=true /usr/bin/ansible-playbook -vvvv " +
-            "--extra-vars=\"instance_name='\$DC_INSTANCE_NAME'\" " +
-            "ansible/destroy-dc-build-slave.yml " +
-            "--vault-password-file /etc/openzfs.conf")
+        conditionalSteps {
+            /*
+             * This condition step will destroy the instance, so it
+             * should only run when "UNREGISTER_ONLY" is not set.
+             */
+            condition {
+                not {
+                    stringsMatch('${UNREGISTER_ONLY}', 'yes', true)
+                }
+            }
+            runner('Fail')
+            steps {
+                /*
+                 * Execute the Ansible playbook which will attempt
+                 * to destroy the DCenter instance specified by the
+                 * DC_INSTANCE_NAME parameter.
+                 */
+                shell("ANSIBLE_FORCE_COLOR=true " +
+                    "/usr/bin/ansible-playbook -vvvv " +
+                    "--extra-vars=\"instance_name='\$DC_INSTANCE_NAME'\" " +
+                    "ansible/destroy-dc-build-slave.yml " +
+                    "--vault-password-file /etc/openzfs.conf")
+            }
+        }
+
+        conditionalSteps {
+            /*
+             * This condition step will unregister the instance, so it
+             * should only run when "UNREGISTER_ONLY" is set.
+             */
+            condition {
+                stringsMatch('${UNREGISTER_ONLY}', 'yes', true)
+            }
+            runner('Fail')
+            steps {
+                /*
+                 * Execute the Ansible playbook which will attempt
+                 * to unregister the DCenter instance specified by
+                 * the DC_INSTANCE_NAME parameter.
+                 */
+                shell("ANSIBLE_FORCE_COLOR=true " +
+                    "/usr/bin/ansible-playbook -vvvv " +
+                    "--extra-vars=\"instance_name='\$DC_INSTANCE_NAME'\" " +
+                    "ansible/unregister-dc-build-slave.yml " +
+                    "--vault-password-file /etc/openzfs.conf")
+            }
+        }
     }
 }
