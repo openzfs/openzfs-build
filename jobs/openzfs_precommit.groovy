@@ -37,20 +37,13 @@ multiJob("openzfs-precommit") {
         /*
          * The "create-build-slave" above will output a properties
          * file which we need to gain access to the new slave's AWS
-         * instance id (which is also the slave's node name). Since we
-         * had the prior job write to a file in our workspace, we don't
-         * need to do anything fancy to read in this file; we can use
-         * the default functionality which is to read from our
-         * workspace.
+         * instance id. Since we had the prior job write to a file in
+         * our workspace, we don't need to do anything fancy to read
+         * in this file; we can use the default functionality which
+         * is to read from our workspace.
          *
          * After reading in this properties file, the AWS instance id
          * will be stored in the AWS_INSTANCE_ID environment variable.
-         * This will be used to ensure the "build-illumos" job will be
-         * executed on this new slave; without explicitly specifying the
-         * node to run on, it's possible for the job to scheduled on a
-         * different slave.
-         *
-         * Note, the new slave's name is equal to its AWS instance id.
          */
         environmentVariables {
             propertiesFile("aws_instance.properties")

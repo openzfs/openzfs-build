@@ -36,6 +36,19 @@ job("create-dc-build-slave") {
          */
         stringParam('SLAVE_NAME', null,
             'The name that will be assigned to the newly created slave.')
+
+        /*
+         * This specifies the full path of where the Ansible playbook
+         * should write the properties file. By exposing this as a
+         * parameter, a parent job can provide a path to a file in its
+         * workspace which makes it easy for that parent job to read in
+         * the properties file. This properties file is needed to expose
+         * the DCenter instance name of the new slave to the parent job,
+         * so the instance name can be used to destroy the slave after
+         * it's work is completed.
+         */
+        stringParam('PROPERTIES_PATH', null,
+            'Full path of where to write the properties file')
     }
 
     steps {
@@ -55,6 +68,7 @@ job("create-dc-build-slave") {
          */
         shell("ANSIBLE_FORCE_COLOR=true /usr/bin/ansible-playbook -vvvv " +
             "--extra-vars=\"jenkins_name='\$SLAVE_NAME'\" " +
+            "--extra-vars=\"properties_path='\$PROPERTIES_PATH'\" " +
             "ansible/create-dc-build-slave.yml " +
             "--vault-password-file /etc/openzfs.conf")
     }

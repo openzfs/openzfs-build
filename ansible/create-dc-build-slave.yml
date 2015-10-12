@@ -1,20 +1,57 @@
 ---
+#
+# When using long strings for the DCenter instance name, there's cases
+# where Ansible will fail to connect to the system when attempting to
+# run the "host: openzfs-jenkins-slave" roles below. Thus, we can't
+# simply use the "jenkins_name" variable that will be passed into this
+# playbook (by the calling using "--extra-vars"), since that could
+# potentially be "too long".
+#
+# As a workaround, we create a pseudo random name for the instance here,
+# that is short enough to keep Ansible happy (i.e. able to apply the
+# roles below) and unique enough to prevent conflicts (DCenter instance
+# names must be unique).
+#
+# To allow the Jenkins job that calls this playbook a mechanism to
+# determine this DCenter instance name used, we create a properties file
+# that includes the instance name. This file can then be ingested by the
+# Jenkins job, importing the DC_INSTANCE_NAME environment variable into
+# the running job in the process. Without this properties file, the
+# Jenkins job would not be able to destroy this instance, since the
+# instance name is needed to perform the destroy operation.
+#
+# Also note, we persist the instance name prior to actually creating and
+# configuring the instance. In the event of an error, we still want to
+# allow the Jenkins job to clean up the instance, so we need to write
+# out this information before an error can occur.
+#
+- hosts: localhost
+  connection: local
+  gather_facts: false
+  tasks:
+    - name: Generate random suffix for DCenter instance name
+      shell: "date +%s | md5sum | cut -c 1-8"
+      register: rand
+    - name: Generate DCenter instance name using random suffix
+      shell: "echo openzfs-{{ rand.stdout }}"
+      register: name
+    - name: Write DCenter instance property file
+      copy:
+        dest: "{{ properties_path }}"
+        content: "DC_INSTANCE_NAME={{ name.stdout }}"
+      when: properties_path is defined and "{{ properties_path }}" != ""
+
 - hosts: dcenter
   vars:
     add_to_ansible_group: "openzfs-jenkins-slave"
     instance_user: "{{ omnios_ssh_user }}"
     instance_pass: "{{ omnios_ssh_pass }}"
-    instance_name: "{{ jenkins_name }}"
+    instance_name: "{{ hostvars.localhost.name.stdout }}"
     image: "omnios-r151014"
   roles:
     - omnios-credentials
     - create-dc-instance
 
-#
-# We can't pull these roles into the block above because these need to
-# run on the Jenkins slave that was just created; while the above role
-# needs to run on the Jenkins master.
-#
 - hosts: openzfs-jenkins-slave
   vars:
     jenkins_master: "http://psurya-jenkins.dcenter.delphix.com:8080"

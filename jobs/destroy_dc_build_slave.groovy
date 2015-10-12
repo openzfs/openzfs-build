@@ -32,7 +32,7 @@ job("destroy-dc-build-slave") {
          * This parameter specifies the DCenter instances name that will
          * be destroyed using the Ansible playbook below.
          */
-        stringParam('INSTANCE_NAME', null, "AWS instance id")
+        stringParam('DC_INSTANCE_NAME', null, "DCenter instance name")
     }
 
     steps {
@@ -47,10 +47,11 @@ job("destroy-dc-build-slave") {
 
         /*
          * Execute the Ansible playbook which will attempt to destroy
-         * the DCenter instance specified by the INSTANCE_NAME parameter.
+         * the DCenter instance specified by the DC_INSTANCE_NAME
+         * parameter.
          */
         shell("ANSIBLE_FORCE_COLOR=true /usr/bin/ansible-playbook -vvvv " +
-            "--extra-vars=\"instance_name='\$INSTANCE_NAME'\" " +
+            "--extra-vars=\"instance_name='\$DC_INSTANCE_NAME'\" " +
             "ansible/destroy-dc-build-slave.yml " +
             "--vault-password-file /etc/openzfs.conf")
     }

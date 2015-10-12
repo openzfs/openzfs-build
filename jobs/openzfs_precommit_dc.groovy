@@ -23,8 +23,23 @@ multiJob("openzfs-precommit-dc") {
             job("create-dc-build-slave") {
                 parameters {
                     predefinedProp("SLAVE_NAME", '${BUILD_TAG}')
+                    predefinedProp("PROPERTIES_PATH",
+                        '${WORKSPACE}/dc_instance.properties')
                 }
             }
+        }
+
+        /*
+         * The "create-build-slave" job above will output a properties
+         * file which we need to gain access to the new slave's DCenter
+         * instance name.
+         *
+         * After reading in this properties file, the DCenter instance
+         * name will be stored in the DC_INSTANCE_NAME environment
+         * variable.
+         */
+        environmentVariables {
+            propertiesFile("dc_instance.properties")
         }
 
         phase("Build OpenZFS using the Jenkins slave just created.") {
@@ -64,16 +79,9 @@ multiJob("openzfs-precommit-dc") {
                             }
 
                             parameters {
-                                /*
-                                 * The "create-dc-build-slave" job above
-                                 * will create the DCenter instance such
-                                 * that it's instance name matches it's
-                                 * Jenkins slave name. Thus, that's why
-                                 * we're able to use '$BUILD_TAG' here;
-                                 * since that was used previously, when
-                                 * creating the instance.
-                                 */
-                                predefinedProp("INSTANCE_NAME", '${BUILD_TAG}')
+                                propertiesFile("dc_instance.properties")
+                                predefinedProp("DC_INSTANCE_NAME",
+                                    '$DC_INSTANCE_NAME')
                             }
                         }
                     }
