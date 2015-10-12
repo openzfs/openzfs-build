@@ -3,11 +3,11 @@
 # Before we can copy the scripts into place below, we need to ensure the
 # directory exists to hold the scripts.
 #
-- name: Create OpenZFS build script directory
+- name: Ensure directory exists to hold scripts
   become: true
   become_user: "root"
   file:
-    path: "/usr/local/build-os"
+    path: "/usr/local"
     state: "directory"
     owner: "root"
     group: "root"
@@ -23,8 +23,8 @@
   become: true
   become_user: "root"
   copy:
-    src: "usr/local/build-os/{{ item.file }}"
-    dest: "/usr/local/build-os/{{ item.file }}"
+    src: "usr/local/{{ item.file }}"
+    dest: "/usr/local/{{ item.file }}"
     owner: "root"
     group: "root"
     mode: "{{ item.mode }}"
@@ -32,6 +32,7 @@
     - { file: "common.sh", mode: "0644" }
     - { file: "os-nightly-lib.sh", mode: "0644" }
     - { file: "build-os.sh", mode: "0755" }
+    - { file: "install-os.sh", mode: "0755" }
 
 #
 # This group is used for the delphix user created below.

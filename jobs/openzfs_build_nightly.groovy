@@ -58,13 +58,14 @@ job("openzfs-build-nightly") {
 
     steps {
         /*
-         * The "build-os.sh" script will be in "/usr/local/build-os" on
-         * the build slave. Additionally, it requires the CI_SH_LIB
-         * environment variable to be set, which it uses to find and
-         * source a couple dependent bash "libraries" that it uses. This
-         * variable should be set to the directory that contains the
-         * "build-os.sh" script along with the dependent libraries.
+         * The "build-os.sh" and "install-os.sh" scripts will be found
+         * in "/usr/local" on the build slave. Additionally they require
+         * the CI_SH_LIB environment variable to be set, which they use
+         * to find and source a dependent bash "library" that they each
+         * use. This variable should also be set to "/usr/local", since
+         * the dependent library will also be installed there.
          */
-        shell('CI_SH_LIB=/usr/local/build-os /usr/local/build-os/build-os.sh')
+        shell('CI_SH_LIB=/usr/local /usr/local/build-os.sh')
+        shell('CI_SH_LIB=/usr/local /usr/local/install-os.sh')
     }
 }
