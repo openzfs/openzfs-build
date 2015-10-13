@@ -91,18 +91,6 @@
     mode: "0644"
 
 #
-# We need the slave's name to be specified as it's needed in the next
-# task when running the Jenkins swarm client. Also, since we're using
-# the "-disableClientsUniqueId" option, this value needs to be unique
-# which is why we can't provide a default value. Ideally, we'd also have
-# a way to determine if the user provided name is unique.
-#
-- name: Ensure the Jenkins slave name is specified
-  fail:
-    msg: "The Jenkins slave's name was not specified."
-  when: jenkins_name is not defined
-
-#
 # This will execute the client portion of the Jenkins swarm plugin,
 # causing this AWS instance to connect back to the Jenkins master node.
 # We want this command to continue running "forever", but we don't want
@@ -117,6 +105,16 @@
 # time for the command to run of 7 weeks (these slaves are used on a
 # per-job basis, so I don't expect any single build to take more than 7
 # weeks to complete).
+#
+# To make it easier to use this role with the "deploy_role.py" program
+# (e.g. during development) this task is only run if the "jenkins_name"
+# variable is specified. Since this variable doesn't have a default
+# value, if this role is applied to a host using "deploy_role.py"
+# without explicitly providing a value for this variable, this task will
+# not be executed (which is usually the intended behavior). As a result,
+# this can make it harder to realize when this variable was not
+# specified when it actually should have been (e.g. from "production"
+# Ansible playbooks); this is an acceptable trade off.
 #
 # Also note, we specifically run the Jenkins swarm client as a non-root
 # user because the illumos build will fail if the build is run as root.
@@ -140,3 +138,4 @@
       -disableClientsUniqueId
   async: 604800
   poll: 0
+  when: jenkins_name is defined

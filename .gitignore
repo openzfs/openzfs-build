@@ -2,3 +2,6 @@
 .vault-password1
 .vault-password2
 *.swp
+
+ansible/roles/geerlingguy.java
+ansible/roles/geerlingguy.jenkins
