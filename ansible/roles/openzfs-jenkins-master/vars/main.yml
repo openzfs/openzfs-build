@@ -10,3 +10,4 @@ jenkins_plugins:
   - nodelabelparameter
   - parameterized-trigger
   - swarm
+  - ghprb

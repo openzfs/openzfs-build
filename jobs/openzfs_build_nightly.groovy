@@ -28,14 +28,14 @@ job("openzfs-build-nightly") {
 
     parameters {
         /*
-         * This parameter allows a user of this job to provide a
-         * specific branch or git hash that should be checked out,
-         * built, and tested. This is particularly useful for building
-         * and testing pull GitHub request commits prior to integrating
-         * them on the "master" branch.
+         * This parameter allows a consumer of this job a way to specify
+         * which git commit or branch should be built and tested. This
+         * is particularly useful for building and testing GitHub pull
+         * requests via the GitHub Pull Request Builder plugin. By
+         * default, the "master" branch will be used.
          */
-        stringParam('GIT_BRANCH', 'master',
-            'The name of the git branch or the git hash to checkout')
+        stringParam('sha1', 'origin/master',
+            'The git commit hash or branch name to build and test.')
     }
 
     scm {
@@ -45,14 +45,13 @@ job("openzfs-build-nightly") {
              * tweak the refspec to ensure we fetch pull request commits
              * as well. By default, none of the pull requests would be
              * fetched, which would cause failures if a pull request
-             * commit was passed in as the "GIT_BRANCH" parameter of
-             * this job.
+             * commit was passed in as the "sha1" parameter of this job.
              */
             remote {
-                github('illumos/illumos-gate')
+                github('openzfs/openzfs')
                 refspec('+refs/pull/*:refs/remotes/origin/pr/*')
             }
-            branch('${GIT_BRANCH}')
+            branch('${sha1}')
         }
     }
 
