@@ -30,7 +30,3 @@
     host: "{{ instance_name }}.{{ inventory_hostname }}"
     port: 22
     state: started
-
-- name: Pause for a minute longer to prevent SSH connection failures
-  pause:
-    minutes: 1

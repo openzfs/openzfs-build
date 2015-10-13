@@ -66,6 +66,6 @@ job("openzfs-build-nightly") {
          * the dependent library will also be installed there.
          */
         shell('CI_SH_LIB=/usr/local /usr/local/build-os.sh')
-        shell('CI_SH_LIB=/usr/local /usr/local/install-os.sh')
+        shell('sudo CI_SH_LIB=/usr/local su root -c /usr/local/install-os.sh')
     }
 }

@@ -59,6 +59,24 @@
     group: "staff"
 
 #
+# Ensure the delphix user has password-less sudo privileges. Since the
+# Jenkins swarm client is not run as the root user, we need to allow the
+# jobs a mechanism to elevate its privileges as it's sometimes necessary
+# to run a command as root from within a job (e.g. when installing build
+# products after successful build).
+#
+- name: Give delphix user password-less sudo privileges
+  become: true
+  become_user: "root"
+  lineinfile:
+    dest: /etc/sudoers
+    regexp: "^{{ item }} "
+    insertafter: "#{{ item }} "
+    line: "{{ item }}"
+  with_items:
+    - "delphix ALL=(ALL) NOPASSWD: ALL"
+
+#
 # We need to create a directory that Jenkins can use for a workspace
 # which it uses to store all of it's files that it needs to execute a
 # job. Otherwise, the Jenkins swarm plugin will use the root directory

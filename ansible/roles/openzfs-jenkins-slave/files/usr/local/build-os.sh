@@ -87,7 +87,7 @@ log_must tar xjpf on-closed-bins-nd.i386.tar.bz2
 
 log_must cp usr/src/tools/env/illumos.sh .
 
-log_must nightly_env_set_var "NIGHTLY_OPTIONS"     "-nCDlprt"
+log_must nightly_env_set_var "NIGHTLY_OPTIONS"     "-nCDprt"
 log_must nightly_env_set_var "GATE"                "$JOB_NAME-$BUILD_NUMBER"
 log_must nightly_env_set_var "CODEMGR_WS"          "$PWD"
 log_must nightly_env_set_var "ON_CLOSED_BINS"      "$PWD/closed"
@@ -102,6 +102,7 @@ log_must nightly_env_set_var "ONLY_LINT_DEFS"      "-I/opt/SUNWspro/sunstudio12.
 log_must nightly_env_set_var "PERL_VERSION"        "5.16.1"
 log_must nightly_env_set_var "PERL_ARCH"           "i86pc-solaris-thread-multi-64int"
 log_must nightly_env_set_var "PERL_PKGVERS"        "-5161"
+log_must nightly_env_set_var "SPRO_ROOT"           "/opt"
 
 log_must cp usr/src/tools/scripts/nightly.sh .
 log_must chmod +x nightly.sh

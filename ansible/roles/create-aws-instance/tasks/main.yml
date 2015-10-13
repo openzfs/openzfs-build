@@ -33,7 +33,3 @@
     port: 22
     state: started
   with_items: aws.instances
-
-- name: Pause for a minute longer to prevent SSH connection failures
-  pause:
-    minutes: 1

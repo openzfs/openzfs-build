@@ -35,6 +35,10 @@
       - pkg:/text/gnu-gettext
       - pkg:/library/python-2/python-extra-26
       - pkg:/developer/versioning/git
+  register: result
+  until: not result|failed
+  retries: 10
+  delay: 60
 
 - name: Ensure dmake symbolic link is present
   file:
