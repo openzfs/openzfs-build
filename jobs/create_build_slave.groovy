@@ -66,7 +66,7 @@ job("create-build-slave") {
         shell("ANSIBLE_FORCE_COLOR=true /usr/bin/ansible-playbook -vvvv " +
             "--extra-vars=\"jenkins_name='\$SLAVE_NAME'\" " +
             "--extra-vars=\"properties_path='\$PROPERTIES_PATH'\" " +
-            "ansible/create-dc-build-slave.yml " +
+            "ansible/create-build-slave.yml " +
             "--vault-password-file /etc/openzfs.conf")
     }
 }

@@ -68,7 +68,7 @@ job("destroy-build-slave") {
                 shell("ANSIBLE_FORCE_COLOR=true " +
                     "/usr/bin/ansible-playbook -vvvv " +
                     "--extra-vars=\"instance_name='\$DC_INSTANCE_NAME'\" " +
-                    "ansible/destroy-dc-build-slave.yml " +
+                    "ansible/destroy-build-slave.yml " +
                     "--vault-password-file /etc/openzfs.conf")
             }
         }
@@ -86,7 +86,7 @@ job("destroy-build-slave") {
                 shell("ANSIBLE_FORCE_COLOR=true " +
                     "/usr/bin/ansible-playbook -vvvv " +
                     "--extra-vars=\"instance_name='\$DC_INSTANCE_NAME'\" " +
-                    "ansible/unregister-dc-build-slave.yml " +
+                    "ansible/unregister-build-slave.yml " +
                     "--vault-password-file /etc/openzfs.conf")
             }
         }
