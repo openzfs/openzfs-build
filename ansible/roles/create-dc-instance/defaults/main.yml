@@ -3,4 +3,4 @@ instance_name: "openzfs-dc-instance"
 instance_user: "delphix"
 instance_pass: "password"
 instance_sudo: false
-image: "omnios-r151014"
+image: "openzfs-r151014"
