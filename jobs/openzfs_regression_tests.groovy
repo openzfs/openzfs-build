@@ -124,7 +124,8 @@ multiJob("openzfs-regression-tests") {
          *
          * After reading in this properties file, the DCenter instance
          * name will be stored in the DC_INSTANCE_NAME environment
-         * variable.
+         * variable, and the DNS address of the system will be stored in
+         * the DC_INSTANCE_DNS environment variable.
          */
         environmentVariables {
             propertiesFile("dc_instance.properties")
@@ -150,6 +151,15 @@ multiJob("openzfs-regression-tests") {
                      * GitHub automatically creates.
                      */
                     predefinedProp("sha1", '${sha1}')
+                }
+            }
+        }
+
+        phase("Reboot the Jenkins slave to start running new build products.") {
+            job("reboot-build-slave") {
+                parameters {
+                    predefinedProp("DC_INSTANCE_DNS", '${DC_INSTANCE_DNS}')
+                    predefinedProp("SLAVE_NAME", '${BUILD_TAG}')
                 }
             }
         }

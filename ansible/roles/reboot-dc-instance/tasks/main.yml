@@ -1,0 +1,13 @@
+---
+- name: Start reboot operation
+  become: true
+  become_user: "root"
+  command: /usr/sbin/shutdown -i 6 -g 1 -y
+  async: 604800
+  poll: 0
+
+- name: Pause shortly to allow reboot command to proceed
+  local_action: pause seconds=10
+
+- name: Wait for instance to finish reboot operation
+  local_action: wait_for host={{ inventory_hostname }} port=22 state=started
