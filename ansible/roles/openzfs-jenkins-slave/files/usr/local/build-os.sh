@@ -88,7 +88,7 @@ log_must tar xjpf on-closed-bins-nd.i386.tar.bz2
 log_must cp usr/src/tools/env/illumos.sh .
 
 log_must nightly_env_set_var "NIGHTLY_OPTIONS"     "-nCDprt"
-log_must nightly_env_set_var "GATE"                "$JOB_NAME-$BUILD_NUMBER"
+log_must nightly_env_set_var "GATE"                "openzfs-nightly"
 log_must nightly_env_set_var "CODEMGR_WS"          "$PWD"
 log_must nightly_env_set_var "ON_CLOSED_BINS"      "$PWD/closed"
 log_must nightly_env_set_var "ONNV_BUILDNUM"       "151014"
