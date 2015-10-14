@@ -15,4 +15,4 @@
   when: not (dc.stat.isreg is defined and dc.stat.isreg)
 
 - name: Destroy DCenter instance
-  shell: "{{ dc.stat.path }} unregister {{ instance_name }}"
+  shell: "{{ dc.stat.path }} unregister --expires 2 {{ instance_name }}"

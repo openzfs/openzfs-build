@@ -39,7 +39,7 @@ job("destroy-build-slave") {
          * should be destroyed, or if the instance should only be
          * unregistered. By default, a full destroy is issued.
          */
-        stringParam('UNREGISTER_ONLY', 'no',
+        stringParam('UNREGISTER_ONLY', 'yes',
             "If 'yes', the instance will be unregistered and not destroyed.")
     }
 
