@@ -2,7 +2,7 @@
  * Orchestrate a full build and test cycle of OpenZFS, including the
  * creation and destruction of Jenkins slaves to do the heavy lifting.
  */
-multiJob("openzfs-precommit-dc") {
+multiJob("openzfs-regression-tests") {
     /*
      * This job needs to run on the master node since it relies on
      * the properties file that will be written out by the
@@ -108,7 +108,7 @@ multiJob("openzfs-precommit-dc") {
 
     steps {
         phase("Create a Jenkins slave to execute the build.") {
-            job("create-dc-build-slave") {
+            job("create-build-slave") {
                 parameters {
                     predefinedProp("SLAVE_NAME", '${BUILD_TAG}')
                     predefinedProp("PROPERTIES_PATH",
@@ -164,14 +164,14 @@ multiJob("openzfs-precommit-dc") {
          * multi-job will be run. As a result we can't simply perform
          * the clean up logic in a phase at the end of the multi-job (it
          * wouldn't be run on failure). To ensure the clean up always
-         * occurs, we need to run the "destroy-dc-build-slave" job
+         * occurs, we need to run the "destroy-build-slave" job
          * within the "publishers" context.
          */
         publishers {
             flexiblePublish {
                 step {
                     downstreamParameterized {
-                        trigger("destroy-dc-build-slave") {
+                        trigger("destroy-build-slave") {
                             block {
                                 failure('FAILURE')
                             }

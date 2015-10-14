@@ -1,7 +1,7 @@
 /*
  * Spin up a DCenter instance which can be used to build OpenZFS.
  */
-job("create-dc-build-slave") {
+job("create-build-slave") {
     /*
      * This job needs to run on the master node since it relies on
      * "ansible-playbook" being available. This utility will only be
@@ -39,13 +39,10 @@ job("create-dc-build-slave") {
 
         /*
          * This specifies the full path of where the Ansible playbook
-         * should write the properties file. By exposing this as a
-         * parameter, a parent job can provide a path to a file in its
-         * workspace which makes it easy for that parent job to read in
-         * the properties file. This properties file is needed to expose
-         * the DCenter instance name of the new slave to the parent job,
-         * so the instance name can be used to destroy the slave after
-         * it's work is completed.
+         * should write the properties file. This properties file is
+         * needed to expose the DCenter instance name of the new slave
+         * to the parent job, so the instance name can be used to
+         * destroy the slave after it's work is completed.
          */
         stringParam('PROPERTIES_PATH', null,
             'Full path of where to write the properties file')

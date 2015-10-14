@@ -1,7 +1,7 @@
 /*
  * Destroy a previously created DCenter instance (e.g. a prior build slave).
  */
-job("destroy-dc-build-slave") {
+job("destroy-build-slave") {
     /*
      * This job needs to run on the master node since it relies on
      * "ansible-playbook" being available. This utility will only be
@@ -29,7 +29,7 @@ job("destroy-dc-build-slave") {
 
     parameters {
         /*
-         * This parameter specifies the DCenter instances name that will
+         * This parameter specifies the DCenter instance name that will
          * be destroyed using the Ansible playbook below.
          */
         stringParam('DC_INSTANCE_NAME', null, "DCenter instance name")
@@ -65,11 +65,6 @@ job("destroy-dc-build-slave") {
             }
             runner('Fail')
             steps {
-                /*
-                 * Execute the Ansible playbook which will attempt
-                 * to destroy the DCenter instance specified by the
-                 * DC_INSTANCE_NAME parameter.
-                 */
                 shell("ANSIBLE_FORCE_COLOR=true " +
                     "/usr/bin/ansible-playbook -vvvv " +
                     "--extra-vars=\"instance_name='\$DC_INSTANCE_NAME'\" " +
@@ -88,11 +83,6 @@ job("destroy-dc-build-slave") {
             }
             runner('Fail')
             steps {
-                /*
-                 * Execute the Ansible playbook which will attempt
-                 * to unregister the DCenter instance specified by
-                 * the DC_INSTANCE_NAME parameter.
-                 */
                 shell("ANSIBLE_FORCE_COLOR=true " +
                     "/usr/bin/ansible-playbook -vvvv " +
                     "--extra-vars=\"instance_name='\$DC_INSTANCE_NAME'\" " +
