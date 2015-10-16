@@ -18,16 +18,13 @@
     - name: Write DCenter instance property file
       lineinfile:
         dest: "{{ properties_path }}"
-        regexp: "^{{ item }} "
-        insertafter: "#{{ item }} "
-        line: "{{ item }}"
+        regexp: "^{{ item.key }}="
+        line: "{{ item.key }}={{ item.value }}"
         create: true
       with_items:
-        - "DC_INSTANCE_NAME_A={{ name_a.stdout }}"
-        - "DC_INSTANCE_DNS_A={{ name_a.stdout }}.dcenter.delphix.com"
-        - "DC_INSTANCE_NAME_B={{ name_b.stdout }}"
-        - "DC_INSTANCE_DNS_B={{ name_b.stdout }}.dcenter.delphix.com"
-      when: properties_path is defined
+        - { key: "DC_INSTANCE_NAME_A", value: "{{ name_a.stdout }}" }
+        - { key: "DC_INSTANCE_NAME_B", value: "{{ name_b.stdout }}" }
+      when: properties_path is defined and "{{ properties_path }}" != ""
 
 - hosts: dcenter.delphix.com
   vars:

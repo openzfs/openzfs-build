@@ -112,7 +112,7 @@ multiJob("openzfs-regression-tests") {
                 parameters {
                     predefinedProp("SLAVE_NAME", '${BUILD_TAG}')
                     predefinedProp("PROPERTIES_PATH",
-                        '${WORKSPACE}/dc_instance.properties')
+                        '${WORKSPACE}/dc_instances.properties')
                 }
             }
         }
@@ -124,11 +124,10 @@ multiJob("openzfs-regression-tests") {
          *
          * After reading in this properties file, the DCenter instance
          * name will be stored in the DC_INSTANCE_NAME environment
-         * variable, and the DNS address of the system will be stored in
-         * the DC_INSTANCE_DNS environment variable.
+         * variable.
          */
         environmentVariables {
-            propertiesFile("dc_instance.properties")
+            propertiesFile("dc_instances.properties")
         }
 
 //        phase("Build OpenZFS using the Jenkins slave just created.") {
@@ -162,24 +161,9 @@ multiJob("openzfs-regression-tests") {
                     predefinedProp("SLAVE_NAME_A", '${BUILD_TAG}-A')
                     predefinedProp("SLAVE_NAME_B", '${BUILD_TAG}-B')
                     predefinedProp("PROPERTIES_PATH",
-                        '${WORKSPACE}/dc_clones.properties')
+                        '${WORKSPACE}/dc_instances.properties')
                 }
             }
-        }
-
-        /*
-         * The "clone-build-slave" job above will generate the following
-         * properties file that will include environment variables that
-         * describe the new DCenter instances that it creates. The file
-         * will contain the following properties that we need:
-         * DC_INSTANCE_NAME_A and DC_INSTANCE_NAME_B.
-         *
-         * The job will create two new DCenter instances, and the
-         * instances names for each will be contained in these two
-         * environment variables.
-         */
-        environmentVariables {
-            propertiesFile("dc_clones.properties")
         }
 
         phase("Run OpenZFS ztest in a loop, for a targeted amount of time.") {
@@ -220,16 +204,16 @@ multiJob("openzfs-regression-tests") {
                                 failure('FAILURE')
                             }
 
+                            /*
+                             * The "create-build-slave" and
+                             * "clone-build-slave" jobs above will
+                             * output the DCenter instance names to this
+                             * properties file. We need to load these
+                             * environment variables so we can pass them
+                             * into the "destroy-build-slave" job now.
+                             */
                             parameters {
-                                propertiesFile("dc_instance.properties")
-                                predefinedProp("DC_INSTANCE_NAME",
-                                    '$DC_INSTANCE_NAME')
-
-                                propertiesFile("dc_clones.properties")
-                                predefinedProp("DC_INSTANCE_NAME_A",
-                                    '$DC_INSTANCE_NAME_A')
-                                predefinedProp("DC_INSTANCE_NAME_B",
-                                    '$DC_INSTANCE_NAME_B')
+                                propertiesFile("dc_instances.properties")
                             }
                         }
                     }
