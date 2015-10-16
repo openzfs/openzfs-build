@@ -182,6 +182,22 @@ multiJob("openzfs-regression-tests") {
             propertiesFile("dc_clones.properties")
         }
 
+        phase("Run OpenZFS ztest in a loop, for a targeted amount of time.") {
+            job("openzfs-run-ztest") {
+                parameters {
+                    nodeLabel("NODE_NAME", '${BUILD_TAG}-A')
+                    predefinedProp("ZLOOP_RUN_TIME", "300")
+                }
+            }
+
+            job("openzfs-run-ztest") {
+                parameters {
+                    nodeLabel("NODE_NAME", '${BUILD_TAG}-B')
+                    predefinedProp("ZLOOP_RUN_TIME", "300")
+                }
+            }
+        }
+
         /*
          * We need to be sure to clean up any DCenter instances that
          * were created as a result of this job; and this needs to
