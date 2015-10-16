@@ -53,7 +53,7 @@
     instance_user: "{{ omnios_ssh_user }}"
     instance_pass: "{{ omnios_ssh_pass }}"
     instance_name: "{{ hostvars.localhost.name.stdout }}"
-    image: "openzfs-r151014"
+    image: "omnios-r151014"
   roles:
     - omnios-credentials
     - create-dc-instance
