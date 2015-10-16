@@ -1,0 +1,3 @@
+---
+instance_name: "openzfs-dc-instance"
+snapshot_name: "openzfs-dc-snapshot"

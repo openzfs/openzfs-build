@@ -1,0 +1,45 @@
+---
+- name: Check for snapshot_name variable
+  fail:
+    msg: "The name of the DCenter snapshot to clone is missing."
+  when: not (snapshot_name is defined and snapshot_name != "")
+
+- name: Check for clone_name variable
+  fail:
+    msg: "The name of the DCenter instance to clone is missing."
+  when: not (clone_name is defined and clone_name != "")
+
+- name: Check for instance_name variable
+  fail:
+    msg: "The name to assign to the new DCenter instance is missing."
+  when: not (instance_name is defined and instance_name != "")
+
+- name: Check for DCenter command
+  stat:
+    path: "/opt/dcenter/bin/dc"
+  register: dc
+
+- name: Fail if DCenter command does not exit
+  fail:
+    msg: "The dc command does not exist at '/opt/dcenter/bin/dc'."
+  when: not (dc.stat.isreg is defined and dc.stat.isreg)
+
+- name: Create new DCenter instance
+  command: >
+    {{ dc.stat.path }} clone -s {{ snapshot_name }} \
+      {{ clone_name }} {{ instance_name }}
+
+- name: Add new DCenter instance
+  add_host:
+    hostname: "{{ instance_name }}.{{ inventory_hostname }}"
+    groupname: "{{ add_to_ansible_group }}"
+    ansible_ssh_user: "{{ instance_user }}"
+    ansible_ssh_pass: "{{ instance_pass }}"
+    jenkins_name: "{{ jenkins_name }}"
+  when: add_to_ansible_group is defined
+
+- name: Wait for SSH to come up on DCenter instance
+  wait_for:
+    host: "{{ instance_name }}.{{ inventory_hostname }}"
+    port: 22
+    state: started

@@ -3,7 +3,6 @@ instance_name: "openzfs-aws-instance"
 instance_type: "t2.micro"
 instance_user: "ec2-user"
 instance_pass: "password"
-instance_sudo: false
 image: "ami-cd3aff89"
 aws_region: "us-west-1"
 aws_group: "default"

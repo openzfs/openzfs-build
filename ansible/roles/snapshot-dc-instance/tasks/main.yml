@@ -1,0 +1,26 @@
+---
+- name: Check for snapshot_name variable
+  fail:
+    msg: "The name to assign to the new DCenter snapshot is missing."
+  when: not (snapshot_name is defined and snapshot_name != "")
+
+- name: Check for instance_name variable
+  fail:
+    msg: "The name of the DCenter instance to snapshot is missing."
+  when: not (instance_name is defined and instance_name != "")
+
+- name: Check for DCenter command
+  stat:
+    path: "/opt/dcenter/bin/dc"
+  register: dc
+
+- name: Fail if DCenter command does not exit
+  fail:
+    msg: "The dc command does not exist at '/opt/dcenter/bin/dc'."
+  when: not (dc.stat.isreg is defined and dc.stat.isreg)
+
+- name: Power off DCenter instance
+  command: "{{ dc.stat.path }} power off {{ instance_name }}"
+
+- name: Snapshot DCenter instance
+  command: "{{ dc.stat.path }} snapshot {{ instance_name }} {{ snapshot_name }}"

@@ -1,0 +1,70 @@
+---
+- hosts: localhost
+  connection: local
+  gather_facts: false
+  tasks:
+    - name: Generate random suffix for DCenter snapshot name
+      shell: "date +%s | md5sum | cut -c 1-8"
+      register: rand
+    - name: Generate DCenter snapshot name using random suffix
+      shell: "echo openzfs-{{ rand.stdout }}"
+      register: snapshot
+    - name: Generate DCenter instance name for clone A
+      shell: "echo {{ clone_name }}-A"
+      register: name_a
+    - name: Generate DCenter instance name for clone B
+      shell: "echo {{ clone_name }}-B"
+      register: name_b
+    - name: Write DCenter instance property file
+      lineinfile:
+        dest: "{{ properties_path }}"
+        regexp: "^{{ item }} "
+        insertafter: "#{{ item }} "
+        line: "{{ item }}"
+        create: true
+      with_items:
+        - "DC_INSTANCE_NAME_A={{ name_a.stdout }}"
+        - "DC_INSTANCE_DNS_A={{ name_a.stdout }}.dcenter.delphix.com"
+        - "DC_INSTANCE_NAME_B={{ name_b.stdout }}"
+        - "DC_INSTANCE_DNS_B={{ name_b.stdout }}.dcenter.delphix.com"
+      when: properties_path is defined
+
+- hosts: dcenter.delphix.com
+  vars:
+    instance_name: "{{ clone_name }}"
+    snapshot_name: "{{ hostvars.localhost.snapshot.stdout }}"
+  roles:
+    - snapshot-dc-instance
+    - omnios-credentials
+
+- hosts: dcenter.delphix.com
+  vars:
+    add_to_ansible_group: "openzfs-jenkins-slave"
+    instance_user: "{{ omnios_ssh_user }}"
+    instance_pass: "{{ omnios_ssh_pass }}"
+    instance_name: "{{ hostvars.localhost.name_a.stdout }}"
+    snapshot_name: "{{ hostvars.localhost.snapshot.stdout }}"
+    jenkins_name: "{{ jenkins_name_a }}"
+    clone_name: "{{ clone_name }}"
+  roles:
+    - clone-dc-instance
+
+- hosts: dcenter.delphix.com
+  vars:
+    add_to_ansible_group: "openzfs-jenkins-slave"
+    instance_user: "{{ omnios_ssh_user }}"
+    instance_pass: "{{ omnios_ssh_pass }}"
+    instance_name: "{{ hostvars.localhost.name_b.stdout }}"
+    snapshot_name: "{{ hostvars.localhost.snapshot.stdout }}"
+    jenkins_name: "{{ jenkins_name_b }}"
+    clone_name: "{{ clone_name }}"
+  roles:
+    - clone-dc-instance
+
+- hosts: "openzfs-jenkins-slave"
+  vars:
+    jenkins_master: "http://psurya-jenkins.dcenter.delphix.com:8080"
+    jenkins_label: "openzfs-build-slave"
+  roles:
+    - initialize-omnios
+    - openzfs-jenkins-slave

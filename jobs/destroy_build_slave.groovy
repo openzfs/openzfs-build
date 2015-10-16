@@ -33,6 +33,8 @@ job("destroy-build-slave") {
          * be destroyed using the Ansible playbook below.
          */
         stringParam('DC_INSTANCE_NAME', null, "DCenter instance name")
+        stringParam('DC_INSTANCE_NAME_A', null, "DCenter instance name")
+        stringParam('DC_INSTANCE_NAME_B', null, "DCenter instance name")
 
         /*
          * This parameter is used to determine if the DCenter instance
@@ -67,6 +69,18 @@ job("destroy-build-slave") {
             steps {
                 shell("ANSIBLE_FORCE_COLOR=true " +
                     "/usr/bin/ansible-playbook -vvvv " +
+                    "--extra-vars=\"instance_name='\$DC_INSTANCE_NAME_A'\" " +
+                    "ansible/destroy-build-slave.yml " +
+                    "--vault-password-file /etc/openzfs.conf")
+
+                shell("ANSIBLE_FORCE_COLOR=true " +
+                    "/usr/bin/ansible-playbook -vvvv " +
+                    "--extra-vars=\"instance_name='\$DC_INSTANCE_NAME_B'\" " +
+                    "ansible/destroy-build-slave.yml " +
+                    "--vault-password-file /etc/openzfs.conf")
+
+                shell("ANSIBLE_FORCE_COLOR=true " +
+                    "/usr/bin/ansible-playbook -vvvv " +
                     "--extra-vars=\"instance_name='\$DC_INSTANCE_NAME'\" " +
                     "ansible/destroy-build-slave.yml " +
                     "--vault-password-file /etc/openzfs.conf")
@@ -83,6 +97,18 @@ job("destroy-build-slave") {
             }
             runner('Fail')
             steps {
+                shell("ANSIBLE_FORCE_COLOR=true " +
+                    "/usr/bin/ansible-playbook -vvvv " +
+                    "--extra-vars=\"instance_name='\$DC_INSTANCE_NAME_A'\" " +
+                    "ansible/unregister-build-slave.yml " +
+                    "--vault-password-file /etc/openzfs.conf")
+
+                shell("ANSIBLE_FORCE_COLOR=true " +
+                    "/usr/bin/ansible-playbook -vvvv " +
+                    "--extra-vars=\"instance_name='\$DC_INSTANCE_NAME_B'\" " +
+                    "ansible/unregister-build-slave.yml " +
+                    "--vault-password-file /etc/openzfs.conf")
+
                 shell("ANSIBLE_FORCE_COLOR=true " +
                     "/usr/bin/ansible-playbook -vvvv " +
                     "--extra-vars=\"instance_name='\$DC_INSTANCE_NAME'\" " +
