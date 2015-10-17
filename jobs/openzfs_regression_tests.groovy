@@ -117,19 +117,19 @@ multiJob("openzfs-regression-tests") {
             }
         }
 
-//        /*
-//         * The "create-build-slave" job above will output a properties
-//         * file which we need to gain access to the new slave's DCenter
-//         * instance name.
-//         *
-//         * After reading in this properties file, the DCenter instance
-//         * name will be stored in the DC_INSTANCE_NAME environment
-//         * variable.
-//         */
-//        environmentVariables {
-//            propertiesFile("dc_instances.properties")
-//        }
-//
+        /*
+         * The "create-build-slave" job above will output a properties
+         * file which we need to gain access to the new slave's DCenter
+         * instance name.
+         *
+         * After reading in this properties file, the DCenter instance
+         * name will be stored in the DC_INSTANCE_NAME environment
+         * variable.
+         */
+        environmentVariables {
+            propertiesFile("dc_instances.properties")
+        }
+
 //        phase("Build OpenZFS using the Jenkins slave just created.") {
 //            job("openzfs-build-nightly") {
 //                /*
@@ -153,32 +153,34 @@ multiJob("openzfs-regression-tests") {
 //                }
 //            }
 //        }
-//
-//        phase("Clone the Jenkins slave to create new slaves for the tests.") {
-//            job("clone-build-slave") {
-//                parameters {
-//                    predefinedProp("CLONE_INSTANCE_NAME", '${DC_INSTANCE_NAME}')
-//                    predefinedProp("SLAVE_NAME_A", '${BUILD_TAG}-A')
-//                    predefinedProp("SLAVE_NAME_B", '${BUILD_TAG}-B')
-//                    predefinedProp("PROPERTIES_PATH",
-//                        '${WORKSPACE}/dc_instances.properties')
-//                }
-//            }
-//        }
-//
-//        phase("Run OpenZFS regression tests in parallel, on cloned slaves.") {
-//            job("openzfs-run-ztest") {
-//                parameters {
-//                    nodeLabel("NODE_NAME", '${BUILD_TAG}-A')
-//                }
-//            }
-//
-//            job("openzfs-run-zfs-test") {
-//                parameters {
-//                    nodeLabel("NODE_NAME", '${BUILD_TAG}-B')
-//                }
-//            }
-//        }
+
+        phase("Clone the Jenkins slave to create new slaves for the tests.") {
+            job("clone-build-slave") {
+                parameters {
+                    predefinedProp("CLONE_INSTANCE_NAME", '${DC_INSTANCE_NAME}')
+                    predefinedProp("SLAVE_NAME_A", '${BUILD_TAG}-A')
+                    predefinedProp("SLAVE_NAME_B", '${BUILD_TAG}-B')
+                    predefinedProp("PROPERTIES_PATH",
+                        '${WORKSPACE}/dc_instances.properties')
+                }
+            }
+        }
+
+        phase("Run OpenZFS regression tests in parallel, on cloned slaves.") {
+            job("openzfs-run-ztest") {
+                killPhaseCondition("NEVER")
+                parameters {
+                    nodeLabel("NODE_NAME", '${BUILD_TAG}-A')
+                }
+            }
+
+            job("openzfs-run-zfs-test") {
+                killPhaseCondition("NEVER")
+                parameters {
+                    nodeLabel("NODE_NAME", '${BUILD_TAG}-B')
+                }
+            }
+        }
 
         /*
          * We need to be sure to clean up any DCenter instances that
