@@ -35,6 +35,7 @@
       - pkg:/text/gnu-gettext
       - pkg:/library/python-2/python-extra-26
       - pkg:/developer/versioning/git
+      - pkg:/system/test/zfstest
   register: result
   until: not result|failed
   retries: 10
