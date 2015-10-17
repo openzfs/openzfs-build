@@ -36,32 +36,40 @@
 
 - hosts: dcenter.delphix.com
   vars:
-    add_to_ansible_group: "openzfs-jenkins-slave"
+    add_to_ansible_group: "openzfs-jenkins-slave-a"
     instance_user: "{{ omnios_ssh_user }}"
     instance_pass: "{{ omnios_ssh_pass }}"
     instance_name: "{{ hostvars.localhost.name_a.stdout }}"
     snapshot_name: "{{ hostvars.localhost.snapshot.stdout }}"
-    jenkins_name: "{{ jenkins_name_a }}"
     clone_name: "{{ clone_name }}"
   roles:
     - clone-dc-instance
 
+- hosts: "openzfs-jenkins-slave-a"
+  vars:
+    jenkins_master: "http://psurya-jenkins.dcenter.delphix.com:8080"
+    jenkins_label: "openzfs-build-slave"
+    jenkins_name: "{{ jenkins_name_a }}"
+  roles:
+    - initialize-omnios
+    - openzfs-jenkins-slave
+
 - hosts: dcenter.delphix.com
   vars:
-    add_to_ansible_group: "openzfs-jenkins-slave"
+    add_to_ansible_group: "openzfs-jenkins-slave-b"
     instance_user: "{{ omnios_ssh_user }}"
     instance_pass: "{{ omnios_ssh_pass }}"
     instance_name: "{{ hostvars.localhost.name_b.stdout }}"
     snapshot_name: "{{ hostvars.localhost.snapshot.stdout }}"
-    jenkins_name: "{{ jenkins_name_b }}"
     clone_name: "{{ clone_name }}"
   roles:
     - clone-dc-instance
 
-- hosts: "openzfs-jenkins-slave"
+- hosts: "openzfs-jenkins-slave-b"
   vars:
     jenkins_master: "http://psurya-jenkins.dcenter.delphix.com:8080"
     jenkins_label: "openzfs-build-slave"
+    jenkins_name: "{{ jenkins_name_b }}"
   roles:
     - initialize-omnios
     - openzfs-jenkins-slave

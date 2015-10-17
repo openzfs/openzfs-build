@@ -35,7 +35,6 @@
     groupname: "{{ add_to_ansible_group }}"
     ansible_ssh_user: "{{ instance_user }}"
     ansible_ssh_pass: "{{ instance_pass }}"
-    jenkins_name: "{{ jenkins_name }}"
   when: add_to_ansible_group is defined
 
 - name: Wait for SSH to come up on DCenter instance
