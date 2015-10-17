@@ -55,66 +55,27 @@ job("destroy-build-slave") {
             github("prakashsurya/openzfs-build", "master")
         }
 
-        conditionalSteps {
-            /*
-             * This condition step will destroy the instance, so it
-             * should only run when "UNREGISTER_ONLY" is not set.
-             */
-            condition {
-                not {
-                    stringsMatch('${UNREGISTER_ONLY}', 'yes', true)
-                }
-            }
-            runner('Fail')
-            steps {
-                shell("ANSIBLE_FORCE_COLOR=true " +
-                    "/usr/bin/ansible-playbook -vvvv " +
-                    "--extra-vars=\"instance_name='\$DC_INSTANCE_NAME_A'\" " +
-                    "ansible/destroy-build-slave.yml " +
-                    "--vault-password-file /etc/openzfs.conf")
+        steps {
+            shell("ANSIBLE_FORCE_COLOR=true " +
+                "/usr/bin/ansible-playbook -vvvv " +
+                "--extra-vars=\"unregister_only='\$UNREGISTER_ONLY'\" " +
+                "--extra-vars=\"instance_name='\$DC_INSTANCE_NAME_A'\" " +
+                "ansible/destroy-build-slave.yml " +
+                "--vault-password-file /etc/openzfs.conf")
 
-                shell("ANSIBLE_FORCE_COLOR=true " +
-                    "/usr/bin/ansible-playbook -vvvv " +
-                    "--extra-vars=\"instance_name='\$DC_INSTANCE_NAME_B'\" " +
-                    "ansible/destroy-build-slave.yml " +
-                    "--vault-password-file /etc/openzfs.conf")
+            shell("ANSIBLE_FORCE_COLOR=true " +
+                "/usr/bin/ansible-playbook -vvvv " +
+                "--extra-vars=\"unregister_only='\$UNREGISTER_ONLY'\" " +
+                "--extra-vars=\"instance_name='\$DC_INSTANCE_NAME_B'\" " +
+                "ansible/destroy-build-slave.yml " +
+                "--vault-password-file /etc/openzfs.conf")
 
-                shell("ANSIBLE_FORCE_COLOR=true " +
-                    "/usr/bin/ansible-playbook -vvvv " +
-                    "--extra-vars=\"instance_name='\$DC_INSTANCE_NAME'\" " +
-                    "ansible/destroy-build-slave.yml " +
-                    "--vault-password-file /etc/openzfs.conf")
-            }
-        }
-
-        conditionalSteps {
-            /*
-             * This condition step will unregister the instance, so it
-             * should only run when "UNREGISTER_ONLY" is set.
-             */
-            condition {
-                stringsMatch('${UNREGISTER_ONLY}', 'yes', true)
-            }
-            runner('Fail')
-            steps {
-                shell("ANSIBLE_FORCE_COLOR=true " +
-                    "/usr/bin/ansible-playbook -vvvv " +
-                    "--extra-vars=\"instance_name='\$DC_INSTANCE_NAME_A'\" " +
-                    "ansible/unregister-build-slave.yml " +
-                    "--vault-password-file /etc/openzfs.conf")
-
-                shell("ANSIBLE_FORCE_COLOR=true " +
-                    "/usr/bin/ansible-playbook -vvvv " +
-                    "--extra-vars=\"instance_name='\$DC_INSTANCE_NAME_B'\" " +
-                    "ansible/unregister-build-slave.yml " +
-                    "--vault-password-file /etc/openzfs.conf")
-
-                shell("ANSIBLE_FORCE_COLOR=true " +
-                    "/usr/bin/ansible-playbook -vvvv " +
-                    "--extra-vars=\"instance_name='\$DC_INSTANCE_NAME'\" " +
-                    "ansible/unregister-build-slave.yml " +
-                    "--vault-password-file /etc/openzfs.conf")
-            }
+            shell("ANSIBLE_FORCE_COLOR=true " +
+                "/usr/bin/ansible-playbook -vvvv " +
+                "--extra-vars=\"unregister_only='\$UNREGISTER_ONLY'\" " +
+                "--extra-vars=\"instance_name='\$DC_INSTANCE_NAME'\" " +
+                "ansible/destroy-build-slave.yml " +
+                "--vault-password-file /etc/openzfs.conf")
         }
     }
 }

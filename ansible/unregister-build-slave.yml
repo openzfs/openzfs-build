@@ -1,4 +1,0 @@
----
-- hosts: dcenter.delphix.com
-  roles:
-    - unregister-dc-instance
