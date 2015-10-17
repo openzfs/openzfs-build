@@ -35,6 +35,7 @@
     - { file: "install-os.sh", mode: "0755" }
     - { file: "zloop.sh", mode: "0755" }
     - { file: "run-ztest.sh", mode: "0755" }
+    - { file: "run-zfs-test.sh", mode: "0755" }
 
 #
 # This group is used for the delphix user created below.

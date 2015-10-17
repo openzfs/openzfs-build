@@ -166,18 +166,16 @@ multiJob("openzfs-regression-tests") {
             }
         }
 
-        phase("Run OpenZFS ztest in a loop, for a targeted amount of time.") {
+        phase("Run OpenZFS regression tests in parallel, on cloned slaves.") {
             job("openzfs-run-ztest") {
                 parameters {
                     nodeLabel("NODE_NAME", '${BUILD_TAG}-A')
-                    predefinedProp("ZLOOP_RUN_TIME", "300")
                 }
             }
 
-            job("openzfs-run-ztest") {
+            job("openzfs-run-zfs-test") {
                 parameters {
                     nodeLabel("NODE_NAME", '${BUILD_TAG}-B')
-                    predefinedProp("ZLOOP_RUN_TIME", "300")
                 }
             }
         }
