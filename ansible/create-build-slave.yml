@@ -36,13 +36,9 @@
       shell: "echo openzfs-{{ rand.stdout }}"
       register: name
     - name: Write DCenter instance property file
-      lineinfile:
+      copy:
         dest: "{{ properties_path }}"
-        regexp: "^{{ item.key }}="
-        line: "{{ item.key }}={{ item.value }}"
-        create: true
-      with_items:
-        - { key: "DC_INSTANCE_NAME", value: "{{ name.stdout }}" }
+        content: "DC_INSTANCE_NAME={{ name.stdout }}"
       when: properties_path is defined and "{{ properties_path }}" != ""
 
 - hosts: dcenter.delphix.com
