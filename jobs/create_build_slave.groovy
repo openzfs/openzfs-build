@@ -55,7 +55,7 @@ job("create-build-slave") {
          * that we'll use to stand up a new DCenter instance.
          */
         scm {
-            github("prakashsurya/openzfs-build", "master")
+            github("openzfs/openzfs-build", "master")
         }
 
         /*

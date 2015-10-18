@@ -22,7 +22,7 @@ job("clone-build-slave") {
 
     steps {
         scm {
-            github("prakashsurya/openzfs-build", "testing")
+            github("openzfs/openzfs-build", "master")
         }
 
         shell("ANSIBLE_FORCE_COLOR=true /usr/bin/ansible-playbook -vvvv " +

@@ -52,7 +52,7 @@ job("destroy-build-slave") {
          * with DCenter.
          */
         scm {
-            github("prakashsurya/openzfs-build", "master")
+            github("openzfs/openzfs-build", "master")
         }
 
         steps {
