@@ -4,10 +4,11 @@ jenkins_plugins:
   - any-buildstep
   - envinject
   - flexible-publish
+  - ghprb
   - git
   - job-dsl
   - jenkins-multijob-plugin
   - nodelabelparameter
   - parameterized-trigger
   - swarm
-  - ghprb
+  - throttle-concurrents

@@ -14,8 +14,13 @@ multiJob("openzfs-regression-tests") {
     /*
      * We must explicitly enable concurrent builds, otherwise the
      * default option is to only allow a single build at a time.
+     * Additionally, we limit the number of concurrent jobs to a maximum
+     * of 4 running at any giving time.
      */
     concurrentBuild()
+    throttleConcurrentBuilds {
+        maxTotal(4)
+    }
 
     parameters {
         /*

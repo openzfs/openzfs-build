@@ -40,22 +40,3 @@
   apt:
     name: python-boto
     state: present
-
-#
-# We need to be careful to use "no_log" here and beloww, or else we
-# could leak the credentials in the Ansible log when it's run in
-# verbose mode.
-#
-- name: Load secret files.
-  include_vars: "secret_files.yml"
-  no_log: true
-
-- name: Copy secret files.
-  copy:
-    dest: "{{ item.key }}"
-    content: "{{ item.value.content }}"
-    owner: "{{ item.value.owner }}"
-    group: "{{ item.value.group }}"
-    mode: "{{ item.value.mode }}"
-  with_dict: secret_files
-  no_log: true

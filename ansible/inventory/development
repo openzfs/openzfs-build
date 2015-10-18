@@ -1,2 +1,5 @@
-[openzfs-jenkins-master]
+[openzfs-jenkins-private]
+psurya-jenkins.dcenter.delphix.com ansible_ssh_user=delphix ansible_sudo=yes
+
+[openzfs-jenkins-public]
 build.prakashsurya.com ansible_ssh_user=ubuntu ansible_sudo=yes

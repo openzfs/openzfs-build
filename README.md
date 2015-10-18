@@ -38,15 +38,38 @@ command can be used:
         ansible/openzfs-jenkins-master.yml --ask-vault-pass
 
 ```
-This will prompt for the vault password, which is needed to decrpt any
+This will prompt for the vault password, which is needed to decrypt any
 encrypted files, and then interact with the system listed in the
 `development` file to configure it with all necessary packages for it to
 function as the OpenZFS Jenkins master.
 
-Once the Jenkins server is configured, the initial "seed-job" needs to
-be created which will be used to import all of the jobs contained in
-this repository. To do this, perform the following steps by navigating
-through the Jenkins web interface:
+Once the Jenkins server is configured using the Ansible playbook above,
+the GitHub pull request builder plugin needs to be manually configured
+with the OpenZFS, "zettabot", GitHub API token. If a new API token needs
+to be created, see the following for instructions on that:
+
+https://help.github.com/articles/creating-an-access-token-for-command-line-use/
+
+Once the API token is known, the GitHub pull request plugin can be
+configured to use this token to push the results of build and test jobs
+to the OpenZFS pull requests. To configure the plugin, perform the
+following steps:
+
+    1. Click on the "Manage Jenkins" link in the left side bar
+    2. Click on the "Configure System" link at the top of the list
+    3. Scroll down to the "GitHub Pull Request Builder" section
+    4. Click the "Add" button next to the "Credentials" label
+        a. Set the "Kind" to "Secret text"
+        b. Set the "Scope" to "Global"
+        c. Copy/Paste the API token into the field labelled "Secret"
+        d. Paste "OpenZFS Robot API Token" into the "Description" field
+        e. Press the "Add" button to finish adding the token
+    5. Paste "OpenZFS Robot" into the "Description" field
+    6. Click the "Save" button at the bottom of the page to finish
+
+Now, the initial "seed-job" needs to be created which will be used to
+import all of the jobs contained in this repository. To do this, perform
+the following steps by navigating through the Jenkins web interface:
 
     1. Click on the "Create new jobs" button
     2. Create the new "seed-job" Jenkins job:
@@ -69,9 +92,10 @@ increased from the default of 2, to something like 16 or 32. Each build
 will consume 2 executor slots on the master node, and 1 executor slot on
 the build slave. The executor slots are used like so:
 
-    - The parent "openzfs-precommit" job will consume a single executor
-      slot on the master node during the entire run time of the build
-      (during the creation and destruction of the build slave, as well).
+    - The parent "openzfs-regression-tests" job will consume a single
+      executor slot on the master node during the entire run time of the
+      build and tests; and during the creation and destruction of the
+      build slave, as well.
 
     - The "create-build-slave" and "destroy-build-slave" will each
       consume a single executor slot on the master node. These slots
@@ -79,11 +103,12 @@ the build slave. The executor slots are used like so:
       sub jobs (i.e. after the slave is created or destroyed, the
       executor slot held by these jobs will be released).
 
-    - The "openzfs-build-nightly" job will consume a single executor
-      slot on a build slave. Each run of this job is pinned to a
+    - The "openzfs-build-nightly" job, "openzfs-run-ztest" job, and the
+      "openzfs-run-zfs-test" job will each consume a single executor
+      slot on a build slave. Each run of these jobs are pinned to a
       specific build slave, so the executor slot this job consumes
       shouldn't become an issue (it consumes the sole executor slot on a
-      predetermined build slave).
+      predetermined build slave created specifically for that job).
 
 Thus, if using the default of 2 executors on the master, only a single
 build can be executed at any given time. It it recommended to increase

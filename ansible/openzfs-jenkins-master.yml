@@ -1,4 +1,11 @@
 ---
-- hosts: openzfs-jenkins-master
+- hosts: openzfs-jenkins-private
   roles:
-    - openzfs-jenkins-master
+    - openzfs-jenkins-private
+
+#
+# Disable the public instance for now, this still needs work.
+#
+#- hosts: openzfs-jenkins-public
+#  roles:
+#    - openzfs-jenkins-private

@@ -5,3 +5,8 @@ secret_files:
     group: "jenkins"
     mode: "0400"
     content: "<ansible vault password>"
+  /etc/ansible/hosts:
+    owner: "root"
+    group: "root"
+    mode: "0644"
+    content: "<ansible hosts content>"
