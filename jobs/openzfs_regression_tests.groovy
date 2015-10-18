@@ -33,83 +33,83 @@ multiJob("openzfs-regression-tests") {
             'The git commit hash or branch name to build and test.')
     }
 
-//    scm {
-//        git {
-//            /*
-//             * We need to tweak the refspec to ensure we fetch the
-//             * commits that belong to pull requests; by default this
-//             * would not happen. We don't need to worry about changing
-//             * branches here, though, since we don't actual do the build
-//             * in this job. Instead, we pass the commit to be built on
-//             * to the "openzfs-build-nightly" job that's run below.
-//             * Thus, we need to ensure the repository listed here
-//             * matches the repository used in the build nightly job.
-//             */
-//            remote {
-//                github('openzfs/openzfs')
-//                refspec('+refs/pull/*:refs/remotes/origin/pr/*')
-//            }
-//        }
-//    }
-//
-//    triggers {
-//        pullRequest {
-//            /*
-//             * Any GitHub user that's included in this list will be
-//             * allowed to trigger new builds without approval. If a pull
-//             * request is opened by a user that's not in this list, a
-//             * member of this list will have to approve the build using
-//             * the trigger phrase specified below.
-//             */
-//            admin(['prakashsurya'])
-//
-//            /*
-//             * We poll the upstream repository once every 5 minutes to
-//             * detect new and changes pull requests.
-//             */
-//            cron('H/5 * * * *')
-//
-//            /*
-//             * If a user not on the whitelist submits a pull request,
-//             * testing requires approval before it will start. A comment
-//             * of this phrase on the pull request, from a user on the
-//             * white list, will grant approval.
-//             */
-//            triggerPhrase('test this please')
-//
-//            /*
-//             * Allow white listed user to bypass the trigger phrase.
-//             */
-//            onlyTriggerPhrase(false)
-//
-//            /*
-//             * The Jenkins master is hiding behind a firewall, so we
-//             * can't use GitHub hooks and must rely on polling.
-//             */
-//            useGitHubHooks(false)
-//
-//            /*
-//             * Require the trigger phrase for users not whitelisted.
-//             */
-//            permitAll(false)
-//
-//            /*
-//             * Don't automatically close pull requests if they fail they
-//             * automated testing.
-//             */
-//            autoCloseFailedPullRequests(false)
-//
-//            extensions {
-//                commitStatus {
-//                    context('OpenZFS Regression Tests')
-//                    startedStatus('Tests have started.')
-//                    triggeredStatus('Tests have been triggered.')
-//                    completedStatus('SUCCESS', 'Tests passed.')
-//                    completedStatus('FAILURE', 'Tests failed.')
-//                }
-//            }
-//        }
-//    }
+    scm {
+        git {
+            /*
+             * We need to tweak the refspec to ensure we fetch the
+             * commits that belong to pull requests; by default this
+             * would not happen. We don't need to worry about changing
+             * branches here, though, since we don't actual do the build
+             * in this job. Instead, we pass the commit to be built on
+             * to the "openzfs-build-nightly" job that's run below.
+             * Thus, we need to ensure the repository listed here
+             * matches the repository used in the build nightly job.
+             */
+            remote {
+                github('openzfs/openzfs')
+                refspec('+refs/pull/*:refs/remotes/origin/pr/*')
+            }
+        }
+    }
+
+    triggers {
+        pullRequest {
+            /*
+             * Any GitHub user that's included in this list will be
+             * allowed to trigger new builds without approval. If a pull
+             * request is opened by a user that's not in this list, a
+             * member of this list will have to approve the build using
+             * the trigger phrase specified below.
+             */
+            admin(['prakashsurya'])
+
+            /*
+             * We poll the upstream repository once every 5 minutes to
+             * detect new and changes pull requests.
+             */
+            cron('H/5 * * * *')
+
+            /*
+             * If a user not on the whitelist submits a pull request,
+             * testing requires approval before it will start. A comment
+             * of this phrase on the pull request, from a user on the
+             * white list, will grant approval.
+             */
+            triggerPhrase('test this please')
+
+            /*
+             * Allow white listed user to bypass the trigger phrase.
+             */
+            onlyTriggerPhrase(false)
+
+            /*
+             * The Jenkins master is hiding behind a firewall, so we
+             * can't use GitHub hooks and must rely on polling.
+             */
+            useGitHubHooks(false)
+
+            /*
+             * Require the trigger phrase for users not whitelisted.
+             */
+            permitAll(false)
+
+            /*
+             * Don't automatically close pull requests if they fail they
+             * automated testing.
+             */
+            autoCloseFailedPullRequests(false)
+
+            extensions {
+                commitStatus {
+                    context('OpenZFS Regression Tests')
+                    startedStatus('Tests have started.')
+                    triggeredStatus('Tests have been triggered.')
+                    completedStatus('SUCCESS', 'Tests passed.')
+                    completedStatus('FAILURE', 'Tests failed.')
+                }
+            }
+        }
+    }
 
     steps {
         phase("Create a Jenkins slave to execute the build.") {
@@ -135,29 +135,29 @@ multiJob("openzfs-regression-tests") {
             propertiesFile("dc_instances.properties")
         }
 
-//        phase("Build OpenZFS using the Jenkins slave just created.") {
-//            job("openzfs-build-nightly") {
-//                /*
-//                 * The NODE_NAME parameter ensures the build will run on the new Jenkins
-//                 * slave that was created in the previous phase.
-//                 */
-//                parameters {
-//                    /*
-//                     * This parameter ensures the build will run on the
-//                     * new Jenkins slave that was just created in the
-//                     * previous phase.
-//                     */
-//                    nodeLabel("NODE_NAME", '${BUILD_TAG}')
-//
-//                    /*
-//                     * This parameter ensures we test the actual pull
-//                     * request commit, and not the merge commit that
-//                     * GitHub automatically creates.
-//                     */
-//                    predefinedProp("sha1", '${sha1}')
-//                }
-//            }
-//        }
+        phase("Build OpenZFS using the Jenkins slave just created.") {
+            job("openzfs-build-nightly") {
+                /*
+                 * The NODE_NAME parameter ensures the build will run on the new Jenkins
+                 * slave that was created in the previous phase.
+                 */
+                parameters {
+                    /*
+                     * This parameter ensures the build will run on the
+                     * new Jenkins slave that was just created in the
+                     * previous phase.
+                     */
+                    nodeLabel("NODE_NAME", '${BUILD_TAG}')
+
+                    /*
+                     * This parameter ensures we test the actual pull
+                     * request commit, and not the merge commit that
+                     * GitHub automatically creates.
+                     */
+                    predefinedProp("sha1", '${sha1}')
+                }
+            }
+        }
 
         phase("Clone the Jenkins slave to create new slaves for the tests.") {
             job("clone-build-slave") {
