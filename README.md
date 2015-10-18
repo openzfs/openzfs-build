@@ -96,7 +96,7 @@ defer to that file for the specifics on how the build occurs (see the
 Additionally, upon a successful build of OpenZFS, the build slave will
 be upgraded using the build products created during the build. This
 upgrade is performed by executing the `install-os.sh` that's installed
-in `/usr/local` on the build slave, which essentially a very thin
+in `/usr/local` on the build slave, which is essentially a very thin
 wrapper around the `onu` command which does the upgrade operation (see
 the `install-os.sh` script of the `openzfs-jenkins-slave` Ansible role
 for more details).
@@ -187,7 +187,6 @@ command can be used:
 ```
     $ ansible-playbook -i ansible/inventory/development \
         ansible/openzfs-jenkins-master.yml --ask-vault-pass
-
 ```
 This will prompt for the vault password, which is needed to decrypt any
 encrypted files, and then interact with the system listed in the
@@ -206,37 +205,37 @@ configured to use this token to push the results of build and test jobs
 to the OpenZFS pull requests. To configure the plugin, perform the
 following steps:
 
-    1. Click on the "Manage Jenkins" link in the left side bar
-    2. Click on the "Configure System" link at the top of the list
-    3. Scroll down to the "GitHub Pull Request Builder" section
-    4. Click the "Add" button next to the "Credentials" label
-        a. Set the "Kind" to "Secret text"
-        b. Set the "Scope" to "Global"
-        c. Copy/Paste the API token into the field labelled "Secret"
-        d. Paste "OpenZFS Robot API Token" into the "Description" field
-        e. Press the "Add" button to finish adding the token
-    5. Paste "OpenZFS Robot" into the "Description" field
-    6. Click the "Save" button at the bottom of the page to finish
+1. Click on the "Manage Jenkins" link in the left side bar
+2. Click on the "Configure System" link at the top of the list
+3. Scroll down to the "GitHub Pull Request Builder" section
+4. Click the "Add" button next to the "Credentials" label
+  1. Set the "Kind" to "Secret text"
+  2. Set the "Scope" to "Global"
+  3. Copy/Paste the API token into the field labelled "Secret"
+  4. Paste "OpenZFS Robot API Token" into the "Description" field
+  5. Press the "Add" button to finish adding the token
+5. Paste "OpenZFS Robot" into the "Description" field
+6. Click the "Save" button at the bottom of the page to finish
 
 Now, the initial "seed-job" needs to be created which will be used to
 import all of the jobs contained in this repository. To do this, perform
 the following steps by navigating through the Jenkins web interface:
 
-    1. Click on the "Create new jobs" button
-    2. Create the new "seed-job" Jenkins job:
-        a. Enter "seed-job" in the text box labelled "Item name"
-        b. Select the "Freestyle project" radio button
-        c. Click "OK"
-        d. Navigate to the "Source Code Management" section:
-            i. Select the "Git" radio button
-            ii. Enter the repository's URL
-                e.g. https://github.com/openzfs/openzfs-build.git
-        e. Navigate to the "Build" section:
-            i. Select "Process Job DSLs" in the drop-down menu
-            ii. Select the "Look on Filesystem" radio button
-            iii. Enter "jobs/*.groovy" in the "DSL Scripts" text area
-        f. Click "Save" at the bottom of the page
-    3. Run the new "seed-job" to import the jobs in this repository.
+1. Click on the "Create new jobs" button
+2. Create the new "seed-job" Jenkins job:
+  1. Enter "seed-job" in the text box labelled "Item name"
+  2. Select the "Freestyle project" radio button
+  3. Click "OK"
+  4. Navigate to the "Source Code Management" section:
+    1. Select the "Git" radio button
+    2. Enter the repository's URL
+        e.g. https://github.com/openzfs/openzfs-build.git
+  5. Navigate to the "Build" section:
+    1. Select "Process Job DSLs" in the drop-down menu
+    2. Select the "Look on Filesystem" radio button
+    3. Enter "jobs/*.groovy" in the "DSL Scripts" text area
+  6. Click "Save" at the bottom of the page
+3. Run the new "seed-job" to import the jobs in this repository.
 
 In addition, the number of executors on the master node should be
 increased from the default of 2, to something like 8 or 12 since the
@@ -245,24 +244,24 @@ jobs to run. Each build will consume 2 executor slots on the master
 node, and 1 executor slot on the build slave. The executor slots are
 used like so:
 
-    - The parent "openzfs-regression-tests" job will consume a single
-      executor slot on the master node during the entire run time of the
-      build and tests; and during the creation and destruction of the
-      build slaves, as well.
+- The parent "openzfs-regression-tests" job will consume a single
+  executor slot on the master node during the entire run time of the
+  build and tests; and during the creation and destruction of the
+  build slaves, as well.
 
-    - The "create-build-slave", "destroy-build-slave", and
-      "clone-build-slave" jobs will each consume a single executor slot
-      on the master node. These slots will be consumed and released only
-      during the run time of these sub jobs (i.e. after the slave is
-      created, destroyed, or cloned, the master nodes' executor slot held
-      by these jobs will be released).
+- The "create-build-slave", "destroy-build-slave", and
+  "clone-build-slave" jobs will each consume a single executor slot
+  on the master node. These slots will be consumed and released only
+  during the run time of these sub jobs (i.e. after the slave is
+  created, destroyed, or cloned, the master nodes' executor slot held
+  by these jobs will be released).
 
-    - The "openzfs-build-nightly" job, "openzfs-run-ztest" job, and the
-      "openzfs-run-zfs-test" job will each consume a single executor
-      slot on a build slave. Each run of these jobs are pinned to a
-      specific build slave, so the executor slot this job consumes
-      shouldn't become an issue (it consumes the sole executor slot on a
-      predetermined build slave created specifically for that job).
+- The "openzfs-build-nightly" job, "openzfs-run-ztest" job, and the
+  "openzfs-run-zfs-test" job will each consume a single executor
+  slot on a build slave. Each run of these jobs are pinned to a
+  specific build slave, so the executor slot this job consumes
+  shouldn't become an issue (it consumes the sole executor slot on a
+  predetermined build slave created specifically for that job).
 
 Thus, if using the default of 2 executors on the master, only a single
 build can be executed at any given time and it's even possible to get
