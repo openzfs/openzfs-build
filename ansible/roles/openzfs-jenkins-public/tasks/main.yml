@@ -40,3 +40,10 @@
   apt:
     name: python-boto
     state: present
+
+- name: Allow ssh login from the private OpenZFS instance
+  authorized_key:
+    user: "{{ ansible_ssh_user }}"
+    key: "{{ item }}"
+  with_file:
+    - openzfs-jenkins-private.id_rsa.pub

@@ -1,0 +1,24 @@
+---
+- hosts: openzfs-jenkins-public
+  tasks:
+    - name: Stop the Jenkins instance prior to synchronizing
+      become: true
+      become_user: "root"
+      service:
+        name: "jenkins"
+        state: "stopped"
+    - name: Synchronize the public and private Jenkins instances
+      become: true
+      become_user: "root"
+      synchronize:
+        src: /var/lib/jenkins/
+        dest: /var/lib/jenkins
+        archive: true
+        delete: true
+        compress: true
+    - name: Start the Jenkins instance after synchronizing completes
+      become: true
+      become_user: "root"
+      service:
+        name: "jenkins"
+        state: "started"

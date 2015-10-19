@@ -3,9 +3,6 @@
   roles:
     - openzfs-jenkins-private
 
-#
-# Disable the public instance for now, this still needs work.
-#
-#- hosts: openzfs-jenkins-public
-#  roles:
-#    - openzfs-jenkins-private
+- hosts: openzfs-jenkins-public
+  roles:
+    - openzfs-jenkins-public
