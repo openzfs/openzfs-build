@@ -4,7 +4,6 @@
 #
 
 set -o nounset
-set -o errexit
 
 source "${CI_SH_LIB}/common.sh"
 
