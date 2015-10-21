@@ -76,7 +76,7 @@ multiJob("openzfs-regression-tests") {
              * of this phrase on the pull request, from a user on the
              * white list, will grant approval.
              */
-            triggerPhrase('test this please')
+            triggerPhrase('@zettabot go')
 
             /*
              * Allow white listed user to bypass the trigger phrase.
