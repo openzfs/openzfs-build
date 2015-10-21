@@ -49,6 +49,7 @@ multiJob("openzfs-regression-tests") {
                 github('openzfs/openzfs')
                 refspec('+refs/pull/*:refs/remotes/origin/pr/*')
             }
+            branch('${sha1}')
         }
     }
 
