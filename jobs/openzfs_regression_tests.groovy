@@ -55,13 +55,14 @@ multiJob("openzfs-regression-tests") {
     triggers {
         pullRequest {
             /*
-             * Any GitHub user that's included in this list will be
-             * allowed to trigger new builds without approval. If a pull
-             * request is opened by a user that's not in this list, a
-             * member of this list will have to approve the build using
-             * the trigger phrase specified below.
+             * Any GitHub user that's a public member of the OpenZFS
+             * GitHub organization is allowed to trigger builds without
+             * approval, and are allowed to approve the testing of pull
+             * requests from folks that are not members of this
+             * organization.
              */
-            admin(['prakashsurya'])
+            orgWhitelist(['openzfs'])
+            allowMembersOfWhitelistedOrgsAsAdmin()
 
             /*
              * We poll the upstream repository once every 5 minutes to
