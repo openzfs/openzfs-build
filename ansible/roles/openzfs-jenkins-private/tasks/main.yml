@@ -1,4 +1,12 @@
 ---
+- name: Create Jenkins user's .ssh directory
+  file:
+    path: "~jenkins/.ssh"
+    state: "directory"
+    owner: "jenkins"
+    group: "jenkins"
+    mode: "0700"
+
 #
 # We need to be careful to use "no_log" here and beloww, or else we
 # could leak the credentials in the Ansible log when it's run in
