@@ -16,6 +16,12 @@
         archive: true
         delete: true
         compress: true
+    - name: Remove Jenkins location configuration file
+      become: true
+      become_user: "root"
+      file:
+        dest: "/var/lib/jenkins/jenkins.model.JenkinsLocationConfiguration.xml"
+        state: "absent"
     - name: Disable the necessary Jenkins jobs
       become: true
       become_user: "root"
