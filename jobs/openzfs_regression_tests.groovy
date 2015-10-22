@@ -1,3 +1,5 @@
+def url = 'http://build.prakashsurya.com:8080'
+
 /*
  * Orchestrate a full build and test cycle of OpenZFS, including the
  * creation and destruction of Jenkins slaves to do the heavy lifting.
@@ -108,6 +110,7 @@ multiJob("openzfs-regression-tests") {
                     triggeredStatus('Tests have been triggered.')
                     completedStatus('SUCCESS', 'Tests passed.')
                     completedStatus('FAILURE', 'Tests failed.')
+                    statusUrl(url + '/job/${JOB_NAME}/${BUILD_NUMBER}/')
                 }
             }
         }
