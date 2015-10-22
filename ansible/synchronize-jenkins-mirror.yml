@@ -16,6 +16,16 @@
         archive: true
         delete: true
         compress: true
+    - name: Disable the necessary Jenkins jobs
+      become: true
+      become_user: "root"
+      replace:
+        dest: "/var/lib/jenkins/jobs/{{ item }}/config.xml"
+        regexp: "<disabled>false</disabled>"
+        replace: "<disabled>true</disabled>"
+      with_items:
+        - "openzfs-regression-tests"
+        - "synchronize-jenkins-mirror"
     - name: Start the Jenkins instance after synchronizing completes
       become: true
       become_user: "root"
