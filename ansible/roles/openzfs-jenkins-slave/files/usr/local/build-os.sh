@@ -87,7 +87,7 @@ log_must tar xjpf on-closed-bins-nd.i386.tar.bz2
 
 log_must cp usr/src/tools/env/illumos.sh .
 
-log_must nightly_env_set_var "NIGHTLY_OPTIONS"     "-nCDprt"
+log_must nightly_env_set_var "NIGHTLY_OPTIONS"     "-nlCDprt"
 log_must nightly_env_set_var "GATE"                "openzfs-nightly"
 log_must nightly_env_set_var "CODEMGR_WS"          "$PWD"
 log_must nightly_env_set_var "ON_CLOSED_BINS"      "$PWD/closed"
@@ -98,11 +98,11 @@ log_must nightly_env_set_var "GCC_ROOT"            "/opt/gcc-4.4.4"
 log_must nightly_env_set_var "CW_GCC_DIR"          "\${GCC_ROOT}/bin"
 log_must nightly_env_set_var "__GNUC"              ""
 log_must nightly_env_set_var "CW_NO_SHADOW"        "1"
-log_must nightly_env_set_var "ONLY_LINT_DEFS"      "-I/opt/SUNWspro/sunstudio12.1/prod/include/lint"
 log_must nightly_env_set_var "PERL_VERSION"        "5.16.1"
 log_must nightly_env_set_var "PERL_ARCH"           "i86pc-solaris-thread-multi-64int"
 log_must nightly_env_set_var "PERL_PKGVERS"        "-5161"
-log_must nightly_env_set_var "SPRO_ROOT"           "/opt"
+log_must nightly_env_set_var "SPRO_ROOT"           "/opt/sunstudio12.1"
+log_must nightly_env_set_var "ONLY_LINT_DEFS"      "-I/opt/sunstudio12.1/prod/include/lint"
 
 log_must cp usr/src/tools/scripts/nightly.sh .
 log_must chmod +x nightly.sh
