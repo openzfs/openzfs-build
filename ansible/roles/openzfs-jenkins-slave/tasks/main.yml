@@ -36,6 +36,7 @@
     - { file: "zloop.sh", mode: "0755" }
     - { file: "run-ztest.sh", mode: "0755" }
     - { file: "run-zfs-test.sh", mode: "0755" }
+    - { file: "zfstest-report.py", mode: "0644" }
 
 #
 # This group is used for the delphix user created below.
