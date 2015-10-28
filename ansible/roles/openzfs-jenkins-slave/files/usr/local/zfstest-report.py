@@ -34,19 +34,20 @@ summary = {
 # bubble up to cause this script to exit with a non-zero exit status.
 #
 known = {
-    'cli_root/zfs_property/zfs_written_property_001_pos': 'FAIL',
-    'cli_root/zfs_mount/zfs_mount_all_001_pos': 'FAIL',
-    'mdb/mdb_001_pos': 'FAIL',
-    'rsend/rsend_009_pos': 'FAIL',
-    'zvol/zvol_swap/zvol_swap_004_pos': 'FAIL',
-    'rootpool/rootpool_002_neg': 'FAIL',
     'acl/nontrivial/zfs_acl_chmod_inherit_003_pos': 'FAIL',
     'cli_root/zfs_mount/zfs_mount_009_neg': 'FAIL',
-    'grow_replicas/grow_replicas_001_pos': 'FAIL',
-    'rsend/rsend_008_pos': 'FAIL',
+    'cli_root/zfs_mount/zfs_mount_all_001_pos': 'FAIL',
+    'cli_root/zfs_property/zfs_written_property_001_pos': 'FAIL',
     'cli_root/zfs_snapshot/zfs_snapshot_009_pos': 'FAIL',
+    'cli_root/zpool_get/zpool_get_002_pos': 'FAIL',
+    'grow_replicas/grow_replicas_001_pos': 'FAIL',
+    'mdb/mdb_001_pos': 'FAIL',
     'refreserv/refreserv_004_pos': 'FAIL',
-    'cli_root/zpool_get/zpool_get_002_pos': 'FAIL'
+    'rootpool/rootpool_002_neg': 'FAIL',
+    'rsend/rsend_008_pos': 'FAIL',
+    'rsend/rsend_009_pos': 'FAIL',
+    'zvol/zvol_misc/zvol_misc_002_pos': 'FAIL',
+    'zvol/zvol_swap/zvol_swap_004_pos': 'FAIL'
 }
 
 
@@ -110,20 +111,18 @@ if __name__ == "__main__":
     for test in expected:
         print "    %s %s" % (results[test], test)
 
-    print "\nTests with results other than PASS that are unexpected:"
-    for test in unexpected:
-        expect = "PASS" if test not in known else known[test]
-        print "    %s %s (expected %s)" % (results[test], test, expect)
-
     print "\nTests with result of PASS that are unexpected:"
     for test in known.keys():
         # We probably should not be silently ignoring the case
         # where "test" is not in "results".
         if test not in results or results[test] != "PASS":
             continue
-
-        unexpected.append(test)
         print "    %s %s (expected %s)" % (results[test], test, known[test])
+
+    print "\nTests with results other than PASS that are unexpected:"
+    for test in unexpected:
+        expect = "PASS" if test not in known else known[test]
+        print "    %s %s (expected %s)" % (results[test], test, expect)
 
     print "\nPercent passed: %5.2f%%" % \
         ((summary['passed'] / summary['total']) * 100)
