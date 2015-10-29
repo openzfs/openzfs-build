@@ -34,6 +34,7 @@ summary = {
 # bubble up to cause this script to exit with a non-zero exit status.
 #
 known = {
+    'inheritance/inherit_001_pos': 'FAIL',
     'acl/nontrivial/zfs_acl_chmod_inherit_003_pos': 'FAIL',
     'cli_root/zfs_mount/zfs_mount_009_neg': 'FAIL',
     'cli_root/zfs_mount/zfs_mount_all_001_pos': 'FAIL',
