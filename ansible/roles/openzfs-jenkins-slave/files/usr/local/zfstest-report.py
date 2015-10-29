@@ -41,6 +41,7 @@ known = {
     'cli_root/zfs_snapshot/zfs_snapshot_009_pos': 'FAIL',
     'cli_root/zpool_get/zpool_get_002_pos': 'FAIL',
     'grow_replicas/grow_replicas_001_pos': 'FAIL',
+    'inheritance/inherit_001_pos': 'FAIL',
     'mdb/mdb_001_pos': 'FAIL',
     'refreserv/refreserv_004_pos': 'FAIL',
     'rootpool/rootpool_002_neg': 'FAIL',
