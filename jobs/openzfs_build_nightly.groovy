@@ -36,6 +36,10 @@ job("openzfs-build-nightly") {
          */
         stringParam('sha1', 'origin/master',
             'The git commit hash or branch name to build and test.')
+
+        nodeParam('NODE') {
+            description('The node used to run this job.')
+        }
     }
 
     scm {

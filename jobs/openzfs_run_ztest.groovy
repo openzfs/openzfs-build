@@ -11,6 +11,10 @@ job("openzfs-run-ztest") {
     parameters {
         stringParam('ZLOOP_RUN_TIME', "9000",
             'Target number of seconds to run ztest continuously.')
+
+        nodeParam('NODE') {
+            description('The node used to run this job.')
+        }
     }
 
     steps {

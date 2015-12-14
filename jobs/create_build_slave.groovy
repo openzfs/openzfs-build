@@ -29,23 +29,22 @@ job("create-build-slave") {
 
     parameters {
         /*
-         * This specifies the name that will be assigned to the new
-         * slave that is created. By exposing this as a parameter, a
-         * parent job can specify the new slave's name, and can then
-         * user this name to pin jobs to this specific slave.
+         * This parameter allows for the GitHub repository owner to be
+         * overridden when executing this job, providing an easy way
+         * change the repository used during the "scm" step of this job.
+         * This is especially useful during when testing changes to the
+         * Ansible files.
          */
-        stringParam('SLAVE_NAME', null,
-            'The name that will be assigned to the newly created slave.')
+        stringParam('REPO_OWNER', 'openzfs',
+            'The GitHub owner used when fetching openzfs-build project.')
 
         /*
-         * This specifies the full path of where the Ansible playbook
-         * should write the properties file. This properties file is
-         * needed to expose the DCenter instance name of the new slave
-         * to the parent job, so the instance name can be used to
-         * destroy the slave after it's work is completed.
+         * In addition to overriding the GitHub owner, it can also be
+         * useful to override the branch that is used when fetching the
+         * repository; this parameter makes this possible.
          */
-        stringParam('PROPERTIES_PATH', null,
-            'Full path of where to write the properties file')
+        stringParam('REPO_BRANCH', 'master',
+            'The Git branch used when fetching the openzfs-build project.')
     }
 
     steps {
@@ -55,7 +54,7 @@ job("create-build-slave") {
          * that we'll use to stand up a new DCenter instance.
          */
         scm {
-            github("openzfs/openzfs-build", "master")
+            github('$REPO_OWNER/openzfs-build', '$REPO_BRANCH')
         }
 
         /*
@@ -63,10 +62,30 @@ job("create-build-slave") {
          * instance, which will then use the Jenkins swarm plugin to
          * create a new Jenkins slave.
          */
-        shell("ANSIBLE_FORCE_COLOR=true /usr/bin/ansible-playbook -vvvv " +
-            "--extra-vars=\"jenkins_name='\$SLAVE_NAME'\" " +
-            "--extra-vars=\"properties_path='\$PROPERTIES_PATH'\" " +
-            "ansible/create-build-slave.yml " +
-            "--vault-password-file /etc/openzfs.conf")
+        shell('ANSIBLE_FORCE_COLOR=true /usr/bin/ansible-playbook -vvvv ' +
+            '--extra-vars=' +
+            '"properties_path=\'$WORKSPACE/$BUILD_TAG.properties\'" ' +
+            'ansible/create-build-slave.yml ' +
+            '--vault-password-file /etc/openzfs.conf')
+
+        /*
+         * We have to place the "environmentVariables" command inside a
+         * flexiblePublish step like we do here, to ensure we load the
+         * properties file even if the above "shell" command fails.
+         *
+         * It's possible for the above command to create a new
+         * slave instance, but fail during the configuration step; in
+         * this case we still need to load the instance's ID using this
+         * properties file, or else the instance could not be destroyed.
+         */
+        publishers {
+            flexiblePublish {
+                step {
+                    environmentVariables {
+                        propertiesFile('$BUILD_TAG.properties')
+                    }
+                }
+            }
+        }
     }
 }

@@ -43,6 +43,12 @@ job("destroy-build-slave") {
          */
         stringParam('UNREGISTER_ONLY', 'yes',
             "If 'yes', the instance will be unregistered and not destroyed.")
+
+        stringParam('REPO_OWNER', 'openzfs',
+            'The GitHub owner used when fetching openzfs-build project.')
+        stringParam('REPO_BRANCH', 'master',
+            'The Git branch used when fetching the openzfs-build project.')
+
     }
 
     steps {
@@ -52,30 +58,52 @@ job("destroy-build-slave") {
          * with DCenter.
          */
         scm {
-            github("openzfs/openzfs-build", "master")
+            github('$REPO_OWNER/openzfs-build', '$REPO_BRANCH')
         }
 
-        steps {
-            shell("ANSIBLE_FORCE_COLOR=true " +
-                "/usr/bin/ansible-playbook -vvvv " +
-                "--extra-vars=\"unregister_only='\$UNREGISTER_ONLY'\" " +
-                "--extra-vars=\"instance_name='\$DC_INSTANCE_NAME_A'\" " +
-                "ansible/destroy-build-slave.yml " +
-                "--vault-password-file /etc/openzfs.conf")
+        conditionalSteps {
+            condition {
+                not { stringsMatch('$DC_INSTANCE_NAME_A', '', false) }
+            }
+            runner('DontRun')
+            steps {
+                shell('ANSIBLE_FORCE_COLOR=true ' +
+                    '/usr/bin/ansible-playbook -vvvv ' +
+                    '--extra-vars="unregister_only=\'$UNREGISTER_ONLY\'" ' +
+                    '--extra-vars="instance_name=\'$DC_INSTANCE_NAME_A\'" ' +
+                    'ansible/destroy-build-slave.yml ' +
+                    '--vault-password-file /etc/openzfs.conf')
+            }
+        }
 
-            shell("ANSIBLE_FORCE_COLOR=true " +
-                "/usr/bin/ansible-playbook -vvvv " +
-                "--extra-vars=\"unregister_only='\$UNREGISTER_ONLY'\" " +
-                "--extra-vars=\"instance_name='\$DC_INSTANCE_NAME_B'\" " +
-                "ansible/destroy-build-slave.yml " +
-                "--vault-password-file /etc/openzfs.conf")
+        conditionalSteps {
+            condition {
+                not { stringsMatch('$DC_INSTANCE_NAME_B', '', false) }
+            }
+            runner('DontRun')
+            steps {
+                shell('ANSIBLE_FORCE_COLOR=true ' +
+                    '/usr/bin/ansible-playbook -vvvv ' +
+                    '--extra-vars="unregister_only=\'$UNREGISTER_ONLY\'" ' +
+                    '--extra-vars="instance_name=\'$DC_INSTANCE_NAME_B\'" ' +
+                    'ansible/destroy-build-slave.yml ' +
+                    '--vault-password-file /etc/openzfs.conf')
+            }
+        }
 
-            shell("ANSIBLE_FORCE_COLOR=true " +
-                "/usr/bin/ansible-playbook -vvvv " +
-                "--extra-vars=\"unregister_only='\$UNREGISTER_ONLY'\" " +
-                "--extra-vars=\"instance_name='\$DC_INSTANCE_NAME'\" " +
-                "ansible/destroy-build-slave.yml " +
-                "--vault-password-file /etc/openzfs.conf")
+        conditionalSteps {
+            condition {
+                not { stringsMatch('$DC_INSTANCE_NAME', '', false) }
+            }
+            runner('DontRun')
+            steps {
+                shell('ANSIBLE_FORCE_COLOR=true ' +
+                    '/usr/bin/ansible-playbook -vvvv ' +
+                    '--extra-vars="unregister_only=\'$UNREGISTER_ONLY\'" ' +
+                    '--extra-vars="instance_name=\'$DC_INSTANCE_NAME\'" ' +
+                    'ansible/destroy-build-slave.yml ' +
+                    '--vault-password-file /etc/openzfs.conf')
+            }
         }
     }
 }

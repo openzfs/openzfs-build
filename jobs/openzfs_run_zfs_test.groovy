@@ -11,6 +11,10 @@ job("openzfs-run-zfs-test") {
     parameters {
         stringParam('RUNFILE', '/opt/zfs-tests/runfiles/delphix.run',
             'The run file to use, which lists the specific tests to execute.')
+
+        nodeParam('NODE') {
+            description('The node used to run this job.')
+        }
     }
 
     steps {

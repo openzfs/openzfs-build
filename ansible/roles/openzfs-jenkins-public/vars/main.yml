@@ -12,3 +12,5 @@ jenkins_plugins:
   - parameterized-trigger
   - swarm
   - throttle-concurrents
+  - conditional-buildstep
+  - workflow-aggregator
