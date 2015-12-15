@@ -117,7 +117,6 @@ multiJob("openzfs-regression-tests") {
         phase("Create a Jenkins slave to execute the build.") {
             job("create-build-slave") {
                 parameters {
-                    predefinedProp("SLAVE_NAME", '${BUILD_TAG}')
                     predefinedProp("PROPERTIES_PATH",
                         '${WORKSPACE}/dc_instances.properties')
                 }
@@ -140,8 +139,8 @@ multiJob("openzfs-regression-tests") {
         phase("Build OpenZFS using the Jenkins slave just created.") {
             job("openzfs-build-nightly") {
                 /*
-                 * The NODE_NAME parameter ensures the build will run on the new Jenkins
-                 * slave that was created in the previous phase.
+                 * The NODE parameter ensures the build will run on the new
+                 * Jenkins slave that was created in the previous phase.
                  */
                 parameters {
                     /*
@@ -149,7 +148,7 @@ multiJob("openzfs-regression-tests") {
                      * new Jenkins slave that was just created in the
                      * previous phase.
                      */
-                    nodeLabel("NODE_NAME", '${BUILD_TAG}')
+                    nodeLabel("NODE", '${DC_INSTANCE_NAME}')
 
                     /*
                      * This parameter ensures we test the actual pull
@@ -165,26 +164,28 @@ multiJob("openzfs-regression-tests") {
             job("clone-build-slave") {
                 parameters {
                     predefinedProp("CLONE_INSTANCE_NAME", '${DC_INSTANCE_NAME}')
-                    predefinedProp("SLAVE_NAME_A", '${BUILD_TAG}-A')
-                    predefinedProp("SLAVE_NAME_B", '${BUILD_TAG}-B')
                     predefinedProp("PROPERTIES_PATH",
                         '${WORKSPACE}/dc_instances.properties')
                 }
             }
         }
 
+        environmentVariables {
+            propertiesFile("dc_instances.properties")
+        }
+
         phase("Run OpenZFS regression tests in parallel, on cloned slaves.") {
             job("openzfs-run-ztest") {
                 killPhaseCondition("NEVER")
                 parameters {
-                    nodeLabel("NODE_NAME", '${BUILD_TAG}-A')
+                    nodeLabel("NODE", '${DC_INSTANCE_NAME_A}')
                 }
             }
 
             job("openzfs-run-zfs-test") {
                 killPhaseCondition("NEVER")
                 parameters {
-                    nodeLabel("NODE_NAME", '${BUILD_TAG}-B')
+                    nodeLabel("NODE", '${DC_INSTANCE_NAME_B}')
                 }
             }
         }
