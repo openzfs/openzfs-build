@@ -1,3 +1,4 @@
 ---
 dependencies:
+  - { role: geerlingguy.security }
   - { role: geerlingguy.jenkins }
