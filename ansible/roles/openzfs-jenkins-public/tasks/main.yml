@@ -47,3 +47,18 @@
     key: "{{ item }}"
   with_file:
     - openzfs-jenkins-private.id_rsa.pub
+
+- name: Install FTP package
+  apt:
+    name: vsftpd
+    state: present
+
+- name: Enable anonymous FTP downloads
+  lineinfile:
+    dest: /etc/vsftpd.conf
+    regexp: "^{{ item.key }}="
+    insertafter: "#{{ item.key }}="
+    line: "{{ item.key }}={{ item.value }}"
+  with_items:
+    - { key: "anonymous_enable", value: "YES" }
+  notify: restart vsftpd
