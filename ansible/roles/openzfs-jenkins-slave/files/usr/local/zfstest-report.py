@@ -34,7 +34,6 @@ summary = {
 # bubble up to cause this script to exit with a non-zero exit status.
 #
 known = {
-    'inheritance/inherit_001_pos': 'FAIL',
     'acl/nontrivial/zfs_acl_chmod_inherit_003_pos': 'FAIL',
     'cli_root/zfs_mount/zfs_mount_009_neg': 'FAIL',
     'cli_root/zfs_mount/zfs_mount_all_001_pos': 'FAIL',
@@ -46,9 +45,9 @@ known = {
     'mdb/mdb_001_pos': 'FAIL',
     'refreserv/refreserv_004_pos': 'FAIL',
     'rootpool/rootpool_002_neg': 'FAIL',
-    'redundancy/redundancy_001_pos': FAIL,
-    'redundancy/redundancy_002_pos': FAIL,
-    'redundancy/redundancy_003_pos': FAIL,
+    'redundancy/redundancy_001_pos': 'FAIL',
+    'redundancy/redundancy_002_pos': 'FAIL',
+    'redundancy/redundancy_003_pos': 'FAIL',
     'rsend/rsend_008_pos': 'FAIL',
     'rsend/rsend_009_pos': 'FAIL',
     'slog/slog_013_pos': 'FAIL',
