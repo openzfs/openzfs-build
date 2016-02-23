@@ -40,8 +40,6 @@ known = {
     'casenorm/mixed_formd_delete': 'FAIL',
     'casenorm/mixed_formd_lookup': 'FAIL',
     'casenorm/sensitive_formd_delete': 'FAIL',
-    'cli_root/zfs_mount/zfs_mount_009_neg': 'FAIL',
-    'cli_root/zfs_mount/zfs_mount_all_001_pos': 'FAIL',
     'cli_root/zfs_property/zfs_written_property_001_pos': 'FAIL',
     'cli_root/zfs_snapshot/zfs_snapshot_009_pos': 'FAIL',
     'cli_root/zpool_get/zpool_get_002_pos': 'FAIL',
