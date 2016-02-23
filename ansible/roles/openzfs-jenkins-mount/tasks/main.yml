@@ -1,0 +1,17 @@
+---
+- name: Remove default mount point for Jenkins data disk
+  mount:
+    name: /mnt
+    src: "{{ jenkins_data_disk }}"
+    fstype: auto
+    state: absent
+  when: jenkins_data_disk is defined
+
+- name: Mount Jenkins data disk to Jenkins home directory
+  mount:
+    name: /var/lib/jenkins
+    src: "{{ jenkins_data_disk }}"
+    fstype: auto
+    state: mounted
+  notify: restart jenkins
+  when: jenkins_data_disk is defined
