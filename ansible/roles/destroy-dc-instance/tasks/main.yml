@@ -10,7 +10,7 @@
   when: not (dc.stat.isreg is defined and dc.stat.isreg)
 
 - name: Unregister DCenter instance
-  shell: "{{ dc.stat.path }} unregister --expires 2 {{ instance_name }}"
+  shell: "{{ dc.stat.path }} unregister --expires 7 {{ instance_name }}"
   when: (instance_name is defined and instance_name != "") and
     (unregister_only is defined and unregister_only == 'yes')
 
