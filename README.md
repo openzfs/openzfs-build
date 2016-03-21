@@ -185,7 +185,7 @@ To configure the OpenZFS Jenkins master using ansible, the following
 command can be used:
 
 ```
-    $ ansible-playbook -i ansible/inventory/development \
+    $ ansible-playbook -i ansible/inventory/public-and-private \
         ansible/openzfs-jenkins-master.yml --ask-vault-pass
 ```
 This will prompt for the vault password, which is needed to decrypt any

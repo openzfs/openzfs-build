@@ -3,3 +3,7 @@
   service:
     name: vsftpd
     state: restarted
+
+- name: reload ufw
+  ufw:
+    state: reloaded
