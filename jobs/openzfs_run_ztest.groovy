@@ -9,8 +9,12 @@ job("openzfs-run-ztest") {
     }
 
     parameters {
-        stringParam('ZLOOP_RUN_TIME', "9000",
-            'Target number of seconds to run ztest continuously.')
+        choiceParam('ENABLE_WATCHPOINTS', ['no', 'yes'],
+            'Should "ARC watchpoints" be enabled? These can be used to ' +
+            'detect illegal modification of frozen arc buffers, but incur ' +
+            'a large performance overhead.')
+        stringParam('RUN_TIME', '9000',
+            'The desired number of seconds to run zloop.')
     }
 
     steps {
