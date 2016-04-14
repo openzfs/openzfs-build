@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2014, 2015 by Delphix. All rights reserved.
+# Copyright (c) 2014, 2016 by Delphix. All rights reserved.
 #
 
 import re
@@ -43,7 +43,6 @@ known = {
     'cli_root/zfs_property/zfs_written_property_001_pos': 'FAIL',
     'cli_root/zfs_snapshot/zfs_snapshot_009_pos': 'FAIL',
     'cli_root/zpool_get/zpool_get_002_pos': 'FAIL',
-    'grow_replicas/grow_replicas_001_pos': 'FAIL',
     'inheritance/inherit_001_pos': 'FAIL',
     'mdb/mdb_001_pos': 'FAIL',
     'refreserv/refreserv_004_pos': 'FAIL',
