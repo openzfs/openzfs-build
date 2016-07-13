@@ -35,6 +35,7 @@ summary = {
 #
 known = {
     'acl/nontrivial/zfs_acl_chmod_inherit_003_pos': 'FAIL',
+    'cache/cache_010_neg': 'FAIL',
     'casenorm/insensitive_formd_delete': 'FAIL',
     'casenorm/insensitive_none_delete': 'FAIL',
     'casenorm/mixed_formd_delete': 'FAIL',
