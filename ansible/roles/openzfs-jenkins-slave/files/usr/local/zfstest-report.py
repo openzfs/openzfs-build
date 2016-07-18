@@ -43,6 +43,7 @@ known = {
     'casenorm/sensitive_formd_delete': 'FAIL',
     'cli_root/zfs_property/zfs_written_property_001_pos': 'FAIL',
     'cli_root/zfs_snapshot/zfs_snapshot_009_pos': 'FAIL',
+    'cli_root/zpool_expand/zpool_expand_001_pos': 'FAIL',
     'cli_root/zpool_get/zpool_get_002_pos': 'FAIL',
     'inheritance/inherit_001_pos': 'FAIL',
     'mdb/mdb_001_pos': 'FAIL',
