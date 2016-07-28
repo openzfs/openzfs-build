@@ -58,13 +58,13 @@ multiJob("openzfs-regression-tests") {
     triggers {
         pullRequest {
             /*
-             * Any GitHub user that's a public member of the OpenZFS
-             * GitHub organization is allowed to trigger builds without
+             * Any GitHub user that's a public member of any of these
+             * GitHub organizations is allowed to trigger builds without
              * approval, and are allowed to approve the testing of pull
              * requests from folks that are not members of this
              * organization.
              */
-            orgWhitelist(['openzfs'])
+            orgWhitelist(['openzfs', 'delphix'])
             allowMembersOfWhitelistedOrgsAsAdmin()
 
             /*
