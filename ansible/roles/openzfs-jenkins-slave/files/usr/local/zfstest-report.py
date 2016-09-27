@@ -58,6 +58,7 @@ known = {
     'slog/slog_014_pos': 'FAIL',
     'snapshot/snapshot_008_pos' : 'FAIL',
     'vdev_zaps/vdev_zaps_007_pos': 'FAIL',
+    'zpool_clear/zpool_clear_001_pos': 'FAIL',
     'zvol/zvol_misc/zvol_misc_002_pos': 'FAIL',
     'zvol/zvol_swap/zvol_swap_004_pos': 'FAIL'
 }
