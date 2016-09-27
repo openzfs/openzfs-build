@@ -73,7 +73,7 @@ The `create-build-slave` Jenkins Job
 This job's task is to create a new VM to run the build of OpenZFS from
 source, and produce the necessary build products such that the VM can be
 upgraded to this build products prior to running the various regression
-tests. The VM that is created is based on a standard OmniOS r151014
+tests. The VM that is created is based on a standard OmniOS r151018
 installation, with a couple minimal configuration changes to the base
 image to get it into a usable state; this includes setting a root
 password, enabling root login via ssh, and enabling DHCP networking. Any
