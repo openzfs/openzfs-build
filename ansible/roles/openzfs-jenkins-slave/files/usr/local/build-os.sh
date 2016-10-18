@@ -103,6 +103,8 @@ log_must nightly_env_set_var "PERL_ARCH"           "i86pc-solaris-thread-multi-6
 log_must nightly_env_set_var "PERL_PKGVERS"        "-5161"
 log_must nightly_env_set_var "SPRO_ROOT"           "/opt/sunstudio12.1"
 log_must nightly_env_set_var "ONLY_LINT_DEFS"      "-I/opt/sunstudio12.1/prod/include/lint"
+log_must nightly_env_set_var "PYTHON_VERSION"      "2.6"
+log_must nightly_env_set_var "PYTHON_PKGVERS"      "-26"
 
 log_must cp usr/src/tools/scripts/nightly.sh .
 log_must chmod +x nightly.sh
