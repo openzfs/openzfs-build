@@ -3,6 +3,7 @@
   pkg5:
     name:
       - pkg:/developer/astdev
+      - pkg:/benchmark/fio
       - pkg:/developer/build/make
       - pkg:/developer/build/onbld
       - pkg:/developer/gcc44
